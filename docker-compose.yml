@@ -209,6 +209,7 @@ services:
     build:
       context: ./docker/linux/android
       dockerfile: ./Dockerfile
+    depends_on: [ build-base ]
     image: cobalt-build-android
     scale: 0
 
@@ -320,6 +321,7 @@ services:
       context: ./docker/linux
       dockerfile: evergreen/Dockerfile
     image: cobalt-build-evergreen
+    depends_on: [ build-base ]
     environment:
       <<: *shared-build-env
     scale: 0

@@ -28,5 +28,7 @@ RUN apt update -qqy \
         libxml2-dev \
     && /opt/clean-after-apt.sh
 
-CMD /code/cobalt/build/gyp_cobalt -v -C ${CONFIG} ${PLATFORM} && \
-    ninja -v -j ${NINJA_PARALLEL} -C ${OUTDIR}/${PLATFORM}_${CONFIG} ${TARGET:-cobalt_deploy}
+ENV VERBOSE=${VERBOSE:--v}
+
+CMD /code/cobalt/build/gyp_cobalt ${VERBOSE} -C ${CONFIG} ${PLATFORM} && \
+    ninja ${VERBOSE} -j ${NINJA_PARALLEL} -C ${OUTDIR}/${PLATFORM}_${CONFIG} ${TARGET:-cobalt_deploy}

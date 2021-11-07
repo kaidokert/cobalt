@@ -2,20 +2,28 @@ name: Docker-compose
 
 on: [push]
 
+
 env:
   REGISTRY: ghcr.io
+  PREFIX: ghcr.io/${{ github.repository_owner }}/cobalt
+  CONF: debug
 
 jobs:
   container-build:
     strategy:
       fail-fast: false
       matrix:
-        service:
-          - build-android
-          - build-base
-          - build-evergreen
-          - build-linux-stub
-          - build-raspi
+        include:
+          - service: build-base
+            image_deps: base
+          - service: build-linux-stub
+            image_deps: base build-base
+          - service: build-android
+            image_deps: base build-base
+          - service: build-evergreen
+            image_deps: base build-base
+          - service: build-raspi
+            image_deps: base build-base
 
     runs-on: ubuntu-latest
     steps:
@@ -26,14 +34,25 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - uses: actions/checkout@v2
 
       - name: Retrieve Docker metadata
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/cobalt-${{ matrix.service }} 
+          images: ${{ env.PREFIX }}-${{ matrix.service }}
+
+      - name: Pull images
+        continue-on-error: true
+        run: |
+          echo ${{ matrix.image_deps }}
+          for img in ${{ matrix.image_deps }} ${{ matrix.service }}; do
+            pullimg=${{ env.PREFIX }}-${img}
+            echo pulling ${pullimg}
+            docker pull ${pullimg}
+            docker tag ${pullimg} cobalt-${img}
+          done
 
       - name: Build containers with docker-compose
         uses: smartlyio/docker-compose-action@v1
@@ -42,10 +61,84 @@ jobs:
           build: false
           push: "on:push"
 
-      - name: Tag images
-        run: docker tag cobalt-${{ matrix.service }} ${{ steps.meta.outputs.tags }}
-
-      - name: Push images
+      - name: Push all images
         if: github.event_name != 'pull_request'
-        run: docker push ${{ steps.meta.outputs.tags }}
+        run: |
+          echo ${{ matrix.image_deps }}
+          for img in ${{ matrix.image_deps }} ${{ matrix.service }}; do
+            pullimg=${{ env.PREFIX }}-${img}
+            docker tag cobalt-${img} ${pullimg}:${{ github.ref_name }}
+            docker tag cobalt-${img} ${pullimg}:latest
+            echo pushing ${pullimg}:${{ github.ref_name }}
+            docker push ${pullimg}:${{ github.ref_name }}
+            docker push ${pullimg}:latest
+          done
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: build-base
+            build: linux-x64x11
+          - service: build-linux-stub
+            build: stub
+
+    needs: container-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Retrieve Docker metadata
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.PREFIX }}-${{ matrix.service }}
+
+      - name: Pull
+        run: docker run --pull=always ${{ steps.meta.outputs.tags }} cat /etc/debian_version
+
+      - name: Reverse tag
+        run: docker tag ${{ steps.meta.outputs.tags }} cobalt-${{ matrix.service }}
+
+      - uses: actions/checkout@v2
+
+      - name: Save ccache
+        uses: actions/cache@v2
+        with:
+          path: out/ccache
+          key: ${{ matrix.service }}-ccache-${{ github.run_id }}
+          restore-keys: |
+            ${{ matrix.service }}-ccache-
+
+      - name: Compile through compose
+        run: |
+          mkdir -p out/ccache
+          docker-compose run \
+            --no-deps \
+            -e TARGET=renderer_sandbox_deploy \
+            -e IS_CI=1 \
+            -e VERBOSE="" \
+            -v `pwd`/out/ccache:/root/ccache \
+            ${{ matrix.build }}
+
+      - name: Run sccache check through compose
+        run: |
+          docker-compose run \
+            --no-deps \
+            -v `pwd`/out/ccache:/root/ccache \
+            ${{ matrix.build }} \
+            ccache -s
+
+      - name: Archive results
+        uses: actions/upload-artifact@v2
+        with:
+          name: deploy_dir
+          path: out/${{ matrix.build }}_${{ env.CONF }}/deploy
 
