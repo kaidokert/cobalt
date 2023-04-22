@@ -2,7 +2,14 @@ name: raspi-2
 
 on:
   pull_request:
-    types: [ready_for_review, opened, reopened, synchronize, labeled]
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+      - labeled
+      - converted_to_draft
     branches:
       - main
       - feature/*
@@ -29,12 +36,4 @@ jobs:
       pull-requests: write
     with:
       platform: raspi-2
-      nightly: ${{ github.event.inputs.nightly }}
-  raspi-2-skia:
-    uses: ./.github/workflows/main.yaml
-    permissions:
-      packages: write
-      pull-requests: write
-    with:
-      platform: raspi-2-skia
       nightly: ${{ github.event.inputs.nightly }}
