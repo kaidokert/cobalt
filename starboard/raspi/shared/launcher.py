@@ -221,6 +221,7 @@ class Launcher(abstract_launcher.AbstractLauncher):
         if line.startswith(self.test_complete_tag):
           if line.find(self.test_success_tag) != -1:
             self.return_value = 0
+            logging.info('%s Setting return_value=0', '-' * 10)
           break
         # A line was successfully read without timing out; reset the retry
         # count before attempting to read the next line.
@@ -244,8 +245,9 @@ class Launcher(abstract_launcher.AbstractLauncher):
     if self.pexpect_process is not None and self.pexpect_process.isalive():
       # Check if kernel logged OOM kill or any other system failure message
       if self.return_value:
+        logging.info('%s return_value=%d', '-' * 10, self.return_value)
         logging.info('Sending dmesg')
-        self._PexpectSendLine('dmesg -P --color=never | tail -n 100')
+        self._PexpectSendLine('dmesg -P --color=never | tail -n 3')
         time.sleep(self._PEXPECT_SHUTDOWN_SLEEP_TIME)
         try:
           self.pexpect_process.readlines()
@@ -312,6 +314,7 @@ class Launcher(abstract_launcher.AbstractLauncher):
       logging.info('=' * 32)
 
     self.return_value = 1
+    logging.info('%s Setting return_value=1', '-' * 10)
 
     try:
       # Notify other threads that the run is now active
@@ -368,6 +371,7 @@ class Launcher(abstract_launcher.AbstractLauncher):
       logging.info('Finished running target: %s', self.target_name)
       logging.info('=' * 32)
 
+    logging.info('%s Returning return_value: %d', '-' * 10, self.return_value)
     return self.return_value
 
   def Kill(self):
