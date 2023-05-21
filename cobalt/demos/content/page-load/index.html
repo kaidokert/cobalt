@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript">
+        var values = {}
+        function log(str) {
+            console.log(str);
+        }
+        function handleVisibilityChange() {
+            log(`visibility:${document.visibilityState}`);
+        }
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        window.onload = function () {
+            log(`loaded, search: ${window.location.search}`);
+            values['preload'] = window.location.search.includes('launch=preload');
+            values['visibility'] = document.visibilityState;
+            log(`UA: ${navigator.userAgent}`)
+            try {
+                const regex = /Mozilla.*(Cobalt|Chrome|Gecko)\/([0-9]+).*(?:Starboard[^ ]* | Safari\/|Firefox\/)([0-9]+|[^\/]+)/gm;
+                let m = regex.exec(navigator.userAgent);
+                values['browser'] = m[1];
+                values['major'] = m[2];
+                values['detail'] = m[3];
+            } catch {}
+            setTimeout(measureMemory, 500);
+            handleVisibilityChange();
+        }
+        function MegaBytes(val) {
+            return parseInt(Number(val) / (1024 * 1024));
+        }
+        function createElement(tag, styles, content ) {
+            const el = document.createElement('div');
+            if(content)
+                el.innerText = content;
+            for(const prop in styles) {
+                el.style[prop] = styles[prop]
+            }
+            return el;
+        }
+        function collect(name, description, value) {
+            const mb = MegaBytes(value)
+            if(!isNaN(mb)) {
+                log(`${name} : ${mb} [ ${description} ]`)
+                values[name] = mb
+            }
+        }
+        function report() {
+            const kvpair = Object.entries(values).map(([key, value]) => `${key}=${value}`).join('&')
+            const img = document.createElement('img');
+            img.style.display = 'none';
+            img.src = `report.png?${kvpair}`;
+            document.body.appendChild(img);
+            report = document.getElementById('report');
+            while(report.firstChild) { report.removeChild(report.firstChild)}
+            Object.entries(values).map(([key, value]) => {
+                row = createElement('div', { display: 'table-row'});
+                row.appendChild(createElement('div', {
+                    display: 'table-cell', padding: '5px'
+                }, key))
+                row.appendChild(createElement('div', {
+                    display: 'table-cell', padding: '5px'
+                }, value))
+                report.appendChild(row)
+            })
+        }
+        function measureMemory() {
+            if (typeof h5vcc != 'undefined' && typeof h5vcc.cVal != 'undefined') {
+                // see cobalt/doc/cvals.md
+                collect('sysMemFree','CVal Memory.CPU.Free',h5vcc.cVal.getValue('Memory.CPU.Free'))
+                collect('sysMemUsed','CVal Memory.CPU.Used',h5vcc.cVal.getValue('Memory.CPU.Used'))
+                collect('jsMem','CVal Memory.JS',h5vcc.cVal.getValue('Memory.JS'))
+            }
+            const memory = window.performance.memory;
+            if (memory) {
+                // see https://developer.mozilla.org/en-US/docs/Web/API/Performance/memory#value
+                collect('jsHeapLimit','jsHeapSizeLimit',memory.jsHeapSizeLimit); // cobalt doesn't have this
+                collect('totalJSHeap','totalJSHeapSize',memory.totalJSHeapSize);
+                collect('usedJSHeap','usedJSHeapSize',memory.usedJSHeapSize);
+                // Non-standard Cobalt-only media values
+                collect('mediaSourceLimit','mediaSourceSizeLimit', memory.mediaSourceSizeLimit);
+                collect('totalMediaSource','totalMediaSourceSize', memory.totalMediaSourceSize);
+                collect('usedMediaSource','usedMediaSourceMemorySize', memory.usedMediaSourceMemorySize);
+            }
+            report()
+        }
+    </script>
+</head>
+
+<body style="background-color: white;">
+    <div id="report"></div>
+</body>
+
+</html>
