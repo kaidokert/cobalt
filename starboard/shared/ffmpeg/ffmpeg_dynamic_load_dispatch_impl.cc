@@ -66,6 +66,7 @@ class FFMPEGDispatchImpl {
   bool is_valid() const { return avcodec_ && avformat_ && avutil_; }
 
   FFMPEGDispatch* get_ffmpeg_dispatch();
+  void release_ffmpeg_dispatch();
 
  private:
   SbMutex mutex_;
@@ -115,6 +116,11 @@ FFMPEGDispatchImpl* FFMPEGDispatchImpl::GetInstance() {
   return g_ffmpeg_dispatch_impl;
 }
 
+// static releaseinstance
+void FFMPEGDispatch::ReleaseInstance() {
+  FFMPEGDispatchImpl::GetInstance()->release_ffmpeg_dispatch();
+}
+
 bool FFMPEGDispatchImpl::RegisterSpecialization(int specialization,
                                                 int avcodec,
                                                 int avformat,
@@ -147,6 +153,11 @@ FFMPEGDispatch* FFMPEGDispatchImpl::get_ffmpeg_dispatch() {
   }
   SbMutexRelease(&mutex_);
   return ffmpeg_;
+}
+
+void FFMPEGDispatchImpl::release_ffmpeg_dispatch() {
+  delete g_ffmpeg_dispatch_impl;
+  g_ffmpeg_dispatch_impl = NULL;
 }
 
 const int kMaxVersionedLibraryNameLength = 32;
