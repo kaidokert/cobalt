@@ -37,6 +37,12 @@ namespace image {
 // image to ImageDecoder.
 class ImageDataDecoder {
  public:
+  enum State {
+    kWaitingForHeader,
+    kReadLines,
+    kDone,
+    kError,
+  };
   explicit ImageDataDecoder(render_tree::ResourceProvider* resource_provider,
                             const base::DebuggerHooks& debugger_hooks);
 
@@ -46,14 +52,8 @@ class ImageDataDecoder {
 
   void DecodeChunk(const uint8* data, size_t size);
   scoped_refptr<Image> FinishAndMaybeReturnImage();
-
+  State state() const { return state_; }
  protected:
-  enum State {
-    kWaitingForHeader,
-    kReadLines,
-    kDone,
-    kError,
-  };
 
   // Every subclass of ImageDataDecoder should override this function to do
   // the internal decoding. The return value of this function is the number of
@@ -69,7 +69,6 @@ class ImageDataDecoder {
   const base::DebuggerHooks& debugger_hooks() { return debugger_hooks_; }
 
   void set_state(State state) { state_ = state; }
-  State state() const { return state_; }
 
   render_tree::PixelFormat pixel_format() const { return pixel_format_; }
 
