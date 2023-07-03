@@ -371,6 +371,15 @@ bool AnimatedWebPImage::AdvanceFrame() {
   return true;
 }
 
+base::TimeDelta AnimatedWebPImage::GetFrameDurationForTesting(int frame_index) {
+  WebPIterator webp_iterator;
+  WebPDemuxGetFrame(demux_, frame_index, &webp_iterator);
+  base::TimeDelta frame_duration =
+      base::TimeDelta::FromMilliseconds(webp_iterator.duration);
+  WebPDemuxReleaseIterator(&webp_iterator);
+  return frame_duration;
+}
+
 base::TimeDelta AnimatedWebPImage::GetFrameDuration(int frame_index) {
   DCHECK(task_runner_->RunsTasksInCurrentSequence());
   WebPIterator webp_iterator;

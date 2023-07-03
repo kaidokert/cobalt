@@ -29,6 +29,9 @@
 #include "cobalt/loader/image/jpeg_image_decoder.h"
 #include "starboard/configuration.h"
 
+#include "base/test/scoped_task_environment.h"
+#include "base/task/post_task.h"
+
 namespace cobalt {
 namespace loader {
 namespace image {
@@ -754,10 +757,22 @@ TEST(ImageDecoderTest, DecodeWEBPImageWithMultipleChunks) {
       CheckSameColor(pixels, size.width(), size.height(), expected_color));
 }
 
+class DecodeAnimatedWEBPImageTest : public testing::Test {
+    void SetUp() override {
+        //task_runner_ = base::ThreadTaskRunnerHandle::Get();
+        task_runner_ = base::CreateSequencedTaskRunnerWithTraits(base::TaskTraits());
+    }
+    void TearDown() override {
+        LOG(WARNING) << "Taskrunner reset in TearDown()";
+        task_runner_.reset();
+    }
+protected:
+  scoped_refptr<base::SequencedTaskRunner> task_runner_;
+  base::test::ScopedTaskEnvironment scoped_task_environment;
+};
+
 // Test that we can properly decode animated WEBP image.
-TEST(ImageDecoderTest, DecodeAnimatedWEBPImage) {
-  base::Thread thread("AnimatedWebP");
-  thread.Start();
+TEST_F(DecodeAnimatedWEBPImageTest, DecodeAnimatedWEBPImage) {
 
   std::unique_ptr<FakeResourceProviderStub> resource_provider(
       new FakeResourceProviderStub());
@@ -771,11 +786,20 @@ TEST(ImageDecoderTest, DecodeAnimatedWEBPImage) {
   image_decoder.Finish();
 
   scoped_refptr<AnimatedWebPImage> animated_webp_image =
-      base::polymorphic_downcast<AnimatedWebPImage*>(
-          image_decoder.image().get());
+      base::polymorphic_downcast<AnimatedWebPImage*>(image_decoder.image().get());
   ASSERT_TRUE(animated_webp_image);
+  EXPECT_EQ(animated_webp_image->GetFrameCount(),57);
 
-  animated_webp_image->Play(thread.task_runner());
+  EXPECT_EQ(animated_webp_image->GetFrameDurationForTesting(0),
+    base::TimeDelta::FromMilliseconds(100));
+  EXPECT_EQ(animated_webp_image->GetFrameDurationForTesting(1),
+    base::TimeDelta::FromMilliseconds(100));
+  EXPECT_EQ(animated_webp_image->GetFrameDurationForTesting(57),
+    base::TimeDelta::FromMilliseconds(100));
+  EXPECT_EQ(animated_webp_image->GetFrameDurationForTesting(58),
+    base::TimeDelta::FromMilliseconds(0));
+
+  animated_webp_image->Play(task_runner_);
   animated_webp_image->Stop();
 
   // The image should contain the whole undecoded data from the file.
@@ -786,10 +810,7 @@ TEST(ImageDecoderTest, DecodeAnimatedWEBPImage) {
 }
 
 // Test that we can properly decode animated WEBP image in multiple chunks.
-TEST(ImageDecoderTest, DecodeAnimatedWEBPImageWithMultipleChunks) {
-  base::Thread thread("AnimatedWebP");
-  thread.Start();
-
+TEST_F(DecodeAnimatedWEBPImageTest, DecodeAnimatedWEBPImageWithMultipleChunks) {
   std::unique_ptr<FakeResourceProviderStub> resource_provider(
       new FakeResourceProviderStub());
   MockImageDecoder image_decoder(resource_provider.get());
@@ -800,16 +821,20 @@ TEST(ImageDecoderTest, DecodeAnimatedWEBPImageWithMultipleChunks) {
   image_decoder.DecodeChunk(reinterpret_cast<char*>(&image_data[0]), 2);
   image_decoder.DecodeChunk(reinterpret_cast<char*>(&image_data[2]), 4);
   image_decoder.DecodeChunk(reinterpret_cast<char*>(&image_data[6]), 94);
+  // advance past first frames
   image_decoder.DecodeChunk(reinterpret_cast<char*>(&image_data[100]),
-                            image_data.size() - 100);
+                            100000 - 100);
+  image_decoder.DecodeChunk(reinterpret_cast<char*>(&image_data[100000]), 
+                            image_data.size() - 100000);
   image_decoder.Finish();
 
   scoped_refptr<AnimatedWebPImage> animated_webp_image =
       base::polymorphic_downcast<AnimatedWebPImage*>(
           image_decoder.image().get());
   ASSERT_TRUE(animated_webp_image);
+  EXPECT_EQ(animated_webp_image->GetFrameCount(),57);
 
-  animated_webp_image->Play(thread.task_runner());
+  animated_webp_image->Play(task_runner_);
   animated_webp_image->Stop();
 
   // The image should contain the whole undecoded data from the file.
@@ -818,6 +843,9 @@ TEST(ImageDecoderTest, DecodeAnimatedWEBPImageWithMultipleChunks) {
   EXPECT_EQ(math::Size(480, 270), animated_webp_image->GetSize());
   EXPECT_TRUE(animated_webp_image->IsOpaque());
 }
+
+
+
 }  // namespace image
 }  // namespace loader
 }  // namespace cobalt

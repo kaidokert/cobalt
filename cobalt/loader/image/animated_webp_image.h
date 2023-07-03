@@ -66,6 +66,12 @@ class AnimatedWebPImage : public AnimatedImage {
   // Returns the render image of the frame for debugging
   scoped_refptr<render_tree::Image> GetFrameForDebugging(int target_frame);
 
+  int GetFrameCount() { return frame_count_; }
+  int GetLoopCount() { return loop_count_; }
+  int GetCurrentFrameIndex() { return current_frame_index_; }
+
+  // Returns the duration of the given frame index.
+  base::TimeDelta GetFrameDurationForTesting(int frame_index);
  private:
   ~AnimatedWebPImage() override;
 
@@ -85,7 +91,7 @@ class AnimatedWebPImage : public AnimatedImage {
 
   // Decodes the frame with the given index, returns if it succeeded.
   bool DecodeOneFrame(int frame_index);
-
+  
   // If the time is right, updates the index and time info of the current frame.
   bool AdvanceFrame();
 
