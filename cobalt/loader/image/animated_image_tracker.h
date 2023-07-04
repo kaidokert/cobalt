@@ -20,6 +20,7 @@
 
 #include "base/containers/small_map.h"
 #include "base/threading/thread.h"
+#include "base/sequenced_task_runner.h"
 #include "cobalt/base/unused.h"
 #include "cobalt/loader/image/image.h"
 #include "url/gurl.h"
@@ -63,9 +64,10 @@ class AnimatedImageTracker {
   typedef std::map<GURL, int> URLToIntMap;
   typedef base::small_map<std::map<GURL, base::Unused>, 1> URLSet;
 
-  // The image decode thread is a thread created and owned by the
+  // The image decode task runner is a runner created and owned by the
   // AnimatedImageTracker, but used by the AnimatedImage decoders.
-  base::Thread animated_image_decode_thread_;
+  //base::Thread animated_image_decode_thread_;
+  scoped_refptr<base::SequencedTaskRunner> animated_image_decode_taskrunner_;
 
   URLToImageMap image_map_;
   URLToIntMap previous_url_counts_;

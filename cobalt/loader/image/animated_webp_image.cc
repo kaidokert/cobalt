@@ -29,6 +29,8 @@
 #include "nb/memory_scope.h"
 #include "starboard/memory.h"
 
+#include "base/task/post_task.h"
+
 namespace cobalt {
 namespace loader {
 namespace image {
@@ -77,9 +79,11 @@ void AnimatedWebPImage::Play(
   // thread, but it must be consistent (and consistent with Stop() also).
   // This ensures that it's safe to set |task_runner_| without holding a lock.
   if (!task_runner_) {
-    task_runner_ = task_runner;
+    //task_runner_ = task_runner;
+    task_runner_ = 
+      base::CreateSequencedTaskRunnerWithTraits(base::TaskTraits());
   } else {
-    DCHECK_EQ(task_runner_, task_runner);
+    //DCHECK_EQ(task_runner_, task_runner);
   }
 
   task_runner_->PostTask(FROM_HERE, base::Bind(&AnimatedWebPImage::PlayInternal,
@@ -398,7 +402,7 @@ bool AnimatedWebPImage::AdvanceFrame() {
   // Always wait for a consumer to consume the previous frame before moving
   // forward with decoding the next frame.
   if (!frame_provider_->FrameConsumed()) {
-    if(LOGGING) {
+    if(1) {
       LOG(WARNING) << "Not consumed";
     }
     overruns++;
@@ -437,7 +441,7 @@ bool AnimatedWebPImage::AdvanceFrame() {
   next_frame_time_ =
       current_frame_time_ + duration;
   if (next_frame_time_ < current_time) {
-    if(LOGGING) {
+    if(1) {
       LOG(WARNING) << "clamping to current time";
     }
     // Don't let the animation fall back for more than a frame.

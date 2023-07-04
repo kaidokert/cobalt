@@ -19,6 +19,7 @@
 
 #include "base/trace_event/trace_event.h"
 #include "cobalt/base/polymorphic_downcast.h"
+#include "base/task/post_task.h"
 
 namespace cobalt {
 namespace loader {
@@ -26,12 +27,16 @@ namespace image {
 
 AnimatedImageTracker::AnimatedImageTracker(
     base::ThreadPriority animated_image_decode_thread_priority)
-    : animated_image_decode_thread_("AnimatedImage") {
-  TRACE_EVENT0("cobalt::loader::image", "AnimatedImageTracker::RecordImage()");
-  base::Thread::Options options(base::MessageLoop::TYPE_DEFAULT,
-                                0 /* default stack size */);
-  options.priority = animated_image_decode_thread_priority;
-  animated_image_decode_thread_.StartWithOptions(options);
+    /*: animated_image_decode_thread_("AnimatedImage")*/ {
+  TRACE_EVENT0("cobalt::loader::image", "AnimatedImageTracker::AnimatedImageTracker()");
+
+  animated_image_decode_taskrunner_ = 
+    base::CreateSequencedTaskRunnerWithTraits(base::TaskTraits());
+  //base::
+  //base::Thread::Options options(base::MessageLoop::TYPE_DEFAULT,
+  //                              0 /* default stack size */);
+  //options.priority = animated_image_decode_thread_priority;
+  //animated_image_decode_thread_.StartWithOptions(options);
 }
 
 AnimatedImageTracker::~AnimatedImageTracker() {
@@ -104,7 +109,7 @@ void AnimatedImageTracker::OnDisplayStart(
   DCHECK(animated_image);
   TRACE_EVENT0("cobalt::loader::image",
                "AnimatedImageTracker::OnDisplayStart()");
-  animated_image->Play(animated_image_decode_thread_.task_runner());
+  animated_image->Play(animated_image_decode_taskrunner_);
 }
 
 void AnimatedImageTracker::OnDisplayEnd(
