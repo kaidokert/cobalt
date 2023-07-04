@@ -72,6 +72,11 @@ class AnimatedWebPImage : public AnimatedImage {
 
   // Returns the duration of the given frame index.
   base::TimeDelta GetFrameDurationForTesting(int frame_index);
+
+  void DelayTask();
+  void MakeDelayedTask(int64_t delay);
+  void SetupTaskRunner(const scoped_refptr<base::SequencedTaskRunner>& task_runner);
+
  private:
   ~AnimatedWebPImage() override;
 
@@ -91,7 +96,7 @@ class AnimatedWebPImage : public AnimatedImage {
 
   // Decodes the frame with the given index, returns if it succeeded.
   bool DecodeOneFrame(int frame_index);
-  
+
   // If the time is right, updates the index and time info of the current frame.
   bool AdvanceFrame();
 

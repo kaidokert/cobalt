@@ -64,7 +64,7 @@ class MockImageDecoder : public Decoder {
   std::unique_ptr<Decoder> image_decoder_;
 };
 
-MockImageDecoder::MockImageDecoder()
+inline MockImageDecoder::MockImageDecoder()
     : resource_provider_stub_(new render_tree::ResourceProviderStub()),
       resource_provider_(resource_provider_stub_.get()) {
   image_decoder_.reset(new ImageDecoder(
@@ -75,7 +75,7 @@ MockImageDecoder::MockImageDecoder()
                  base::Unretained(&image_decoder_callback_))));
 }
 
-MockImageDecoder::MockImageDecoder(
+inline MockImageDecoder::MockImageDecoder(
     render_tree::ResourceProvider* resource_provider)
     : resource_provider_(resource_provider) {
   image_decoder_.reset(new ImageDecoder(
@@ -86,29 +86,29 @@ MockImageDecoder::MockImageDecoder(
                  base::Unretained(&image_decoder_callback_))));
 }
 
-LoadResponseType MockImageDecoder::OnResponseStarted(
+inline LoadResponseType MockImageDecoder::OnResponseStarted(
     Fetcher* fetcher, const scoped_refptr<net::HttpResponseHeaders>& headers) {
   return image_decoder_->OnResponseStarted(fetcher, headers);
 }
 
-void MockImageDecoder::DecodeChunk(const char* data, size_t size) {
+inline void MockImageDecoder::DecodeChunk(const char* data, size_t size) {
   image_decoder_->DecodeChunk(data, size);
 }
 
-void MockImageDecoder::Finish() { image_decoder_->Finish(); }
+inline void MockImageDecoder::Finish() { image_decoder_->Finish(); }
 
-bool MockImageDecoder::Suspend() { return image_decoder_->Suspend(); }
+inline bool MockImageDecoder::Suspend() { return image_decoder_->Suspend(); }
 
-void MockImageDecoder::Resume(
+inline void MockImageDecoder::Resume(
     render_tree::ResourceProvider* resource_provider) {
   image_decoder_->Resume(resource_provider);
 }
 
-scoped_refptr<Image> MockImageDecoder::image() {
+inline scoped_refptr<Image> MockImageDecoder::image() {
   return image_decoder_callback_.image;
 }
 
-void MockImageDecoder::ExpectCallWithError(
+inline void MockImageDecoder::ExpectCallWithError(
     const base::Optional<std::string>& error) {
   EXPECT_CALL(image_decoder_callback_, LoadCompleteCallback(error));
 }

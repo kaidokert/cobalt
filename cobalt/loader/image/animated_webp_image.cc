@@ -132,7 +132,7 @@ AnimatedWebPImage::~AnimatedWebPImage() {
                "AnimatedWebPImage::~AnimatedWebPImage()");
   if (task_runner_) {
     Stop();
-    task_runner_->WaitForFence();
+    //task_runner_->WaitForFence();
   }
 
   WebPDemuxDelete(demux_);
@@ -142,6 +142,7 @@ void AnimatedWebPImage::PlayInternal() {
   TRACE_EVENT0("cobalt::loader::image", "AnimatedWebPImage::PlayInternal()");
   DCHECK(task_runner_->RunsTasksInCurrentSequence());
 
+  LOG(WARNING) << "PlayInternal";
   if (is_playing_) {
     return;
   }
@@ -172,6 +173,38 @@ void AnimatedWebPImage::StartDecoding() {
   DecodeFrames();
 }
 
+#include <sstream>
+
+std::string fmtTicks(base::TimeTicks tick) {
+  std::ostringstream strm;
+  const base::TimeDelta as_time_delta = tick - base::TimeTicks();
+  strm << as_time_delta.InMilliseconds();
+  return strm.str();
+}
+
+void AnimatedWebPImage::SetupTaskRunner(const scoped_refptr<base::SequencedTaskRunner>& task_runner) {
+  if (!task_runner_) {
+    task_runner_ = task_runner;
+  } else {
+    DCHECK_EQ(task_runner_, task_runner);
+  }
+}
+
+void AnimatedWebPImage::DelayTask() {
+  DCHECK(task_runner_->RunsTasksInCurrentSequence());
+  auto now = base::TimeTicks::Now();
+  LOG(WARNING) << "DelayTask:" << fmtTicks(now);
+}
+
+void AnimatedWebPImage::MakeDelayedTask(int64_t delay) {
+  DCHECK(task_runner_->RunsTasksInCurrentSequence());
+  LOG(WARNING) << "MakeDelayedTask:" << fmtTicks(base::TimeTicks::Now());
+  task_runner_->PostDelayedTask(FROM_HERE, 
+    base::Bind(&AnimatedWebPImage::DelayTask,base::Unretained(this)), 
+    base::TimeDelta::FromMilliseconds(delay)
+    );
+}
+
 void AnimatedWebPImage::DecodeFrames() {
   TRACE_EVENT0("cobalt::loader::image", "AnimatedWebPImage::DecodeFrames()");
   TRACK_MEMORY_SCOPE("Rendering");
@@ -183,9 +216,14 @@ void AnimatedWebPImage::DecodeFrames() {
         base::Bind(&AnimatedWebPImage::DecodeFrames, base::Unretained(this)));
   }
 
+  auto now = base::TimeTicks::Now();
+  LOG(WARNING) << "DecodeFrames now:" << fmtTicks(now) << " current_frame:"<< current_frame_index_;
   if (AdvanceFrame()) {
+    LOG(WARNING) << "DecodeFrames: AdvanceFrame is true";
     // Decode the frames from current frame to next frame and blend the results.
     DecodeOneFrame(current_frame_index_);
+  } else {
+    LOG(WARNING) << "DecodeFrames: AdvanceFrame is false";
   }
 
   // Set up the next time to call the decode callback.
@@ -198,8 +236,10 @@ void AnimatedWebPImage::DecodeFrames() {
       if (delay < min_delay) {
         delay = min_delay;
       }
+      LOG(WARNING) << "Have next_frametime, PostDelayedTask delaying for:" << delay;
     } else {
       delay = min_delay;
+      LOG(WARNING) << "No next_frametime, PostDelayedTask delaying for:" << delay;
     }
 
     task_runner_->PostDelayedTask(FROM_HERE, decode_closure_.callback(), delay);
@@ -314,7 +354,11 @@ bool AnimatedWebPImage::AdvanceFrame() {
   DCHECK(task_runner_->RunsTasksInCurrentSequence());
 
   base::TimeTicks current_time = base::TimeTicks::Now();
-
+  if(next_frame_time_) {
+    LOG(WARNING) << "\tAdvanceFrame time:" << fmtTicks(current_time) << " next_frame_time:" << fmtTicks(*next_frame_time_);
+  } else {
+    LOG(WARNING) << "\tAdvanceFrame time:" << fmtTicks(current_time);
+  }
   // If the WebP image hasn't been fully fetched, then stop on the current
   // frame.
   if (demux_state_ == WEBP_DEMUX_PARSED_HEADER) {
@@ -328,12 +372,15 @@ bool AnimatedWebPImage::AdvanceFrame() {
 
   // If it's still not time to advance to the next frame, do nothing.
   if (next_frame_time_ && current_time < *next_frame_time_) {
+    auto wait = *next_frame_time_ - current_time;
+    LOG(WARNING) << "\tNot the time now, waiting for:" << wait;
     return false;
   }
 
   // Always wait for a consumer to consume the previous frame before moving
   // forward with decoding the next frame.
   if (!frame_provider_->FrameConsumed()) {
+    LOG(WARNING) << "Not consumed";
     return false;
   }
 
@@ -349,6 +396,7 @@ bool AnimatedWebPImage::AdvanceFrame() {
     // is no additional frame available.
     if (LoopingFinished()) {
       next_frame_time_ = base::nullopt;
+      LOG(WARNING) << "Loop finished, next_frame_time = null";
       return false;
     }
 
@@ -361,13 +409,17 @@ bool AnimatedWebPImage::AdvanceFrame() {
 
   // Update the time in the future at which point we should switch to the
   // frame after the new current frame.
+  auto duration = GetFrameDuration(current_frame_index_);
+  LOG(WARNING) << "GetFrameDuration(current): " << duration;
   next_frame_time_ =
-      current_frame_time_ + GetFrameDuration(current_frame_index_);
+      current_frame_time_ + duration;
   if (next_frame_time_ < current_time) {
+    LOG(WARNING) << "clamping to current time";
     // Don't let the animation fall back for more than a frame.
     next_frame_time_ = current_time;
   }
 
+  LOG(WARNING) << "next_frame_time set to " << fmtTicks(*next_frame_time_);
   return true;
 }
 

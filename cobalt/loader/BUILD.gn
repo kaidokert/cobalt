@@ -262,6 +262,7 @@ copy("copy_loader_test_data") {
     "testdata/sandbox18.jpg",
     "testdata/vsauce_sm.webp",
     "testdata/webp_image.webp",
+    "testdata/webp-animated-opaque.webp",
   ]
 
   file_path = "{{source_root_relative_dir}}/{{source_file_part}}"
