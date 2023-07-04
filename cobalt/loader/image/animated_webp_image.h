@@ -52,6 +52,8 @@ class AnimatedWebPImage : public AnimatedImage {
     return size_.GetArea() * 4 * 2 + static_cast<uint32>(data_buffer_.size());
   }
 
+  void JustATest() override {};
+
   bool IsOpaque() const override { return is_opaque_; }
 
   scoped_refptr<FrameProvider> GetFrameProvider() override;
@@ -108,30 +110,41 @@ class AnimatedWebPImage : public AnimatedImage {
 
   const math::Size size_;
   const bool is_opaque_;
+  
   WebPDemuxer* demux_;
   WebPDemuxState demux_state_;
+
   bool received_first_frame_;
   bool is_playing_;
+
   int frame_count_;
   // The remaining number of times to loop the animation. kLoopInfinite means
   // looping infinitely.
   int loop_count_;
   int current_frame_index_;
+  base::TimeTicks current_frame_time_;
+  base::Optional<base::TimeTicks> next_frame_time_;
+
   bool should_dispose_previous_frame_to_background_;
+
   render_tree::ResourceProvider* resource_provider_;
   const base::DebuggerHooks& debugger_hooks_;
   scoped_refptr<base::SequencedTaskRunner> task_runner_;
 
   render_tree::ColorRGBA background_color_;
   math::RectF previous_frame_rect_;
+
   base::CancelableClosure decode_closure_;
-  base::TimeTicks current_frame_time_;
-  base::Optional<base::TimeTicks> next_frame_time_;
+
   // The original encoded data.
   std::vector<uint8> data_buffer_;
   scoped_refptr<render_tree::Image> current_canvas_;
   scoped_refptr<FrameProvider> frame_provider_;
 
+  base::TimeTicks decoding_start_time_;
+  int total_decoded_frames = 0;
+  int underruns = 0;
+  int overruns = 0;
   // Makes sure that the thread that sets the task_runner is always consistent.
   // This is the thread sending Play()/Stop() calls, and is not necessarily
   // the same thread that the task_runner itself is running on.

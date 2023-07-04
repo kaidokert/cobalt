@@ -182,6 +182,7 @@ target(gtest_target_type, "loader_test") {
     "fetcher_test.h",
     "file_fetcher_test.cc",
     "font/typeface_decoder_test.cc",
+    "image/animated_image_tracker_test.cc",
     "image/animated_webp_image_test.cc",
     "image/image_decoder_test.cc",
     "image/image_decoder_unit_test.cc",

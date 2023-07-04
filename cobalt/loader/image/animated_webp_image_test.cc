@@ -149,6 +149,11 @@ public:
             .WillRepeatedly(Return(true));
         expect_image_data(sz,af);
     }
+    void expect_alpha() {
+      EXPECT_CALL(resource_provider_,
+          AlphaFormatSupported(_))
+          .WillRepeatedly(Return(true));
+    }
     void advance(int64_t t) {
       // Mock clock needs to be forwarded before taskrunner
       AdvanceClockMs(t);
@@ -285,10 +290,9 @@ TEST_F(AnimatedWebPTest, AnimatedPlay) {
 }
 
 TEST_F(AnimatedWebPTest, Animated4) {
+  // Jump to 9 so we get a round number when adding 1 later
   AdvanceTimeMs(9);
-
   auto animation = image_from_file("webp-animated-opaque.webp");
-
   ASSERT_EQ(animation->GetLoopCount(),0);
   ASSERT_EQ(animation->GetFrameCount(),4);
   ASSERT_EQ(animation->GetCurrentFrameIndex(),0);
@@ -296,10 +300,7 @@ TEST_F(AnimatedWebPTest, Animated4) {
   animation->Play(task_runner_);
   ASSERT_EQ(animation->GetCurrentFrameIndex(),0);
 
-  EXPECT_CALL(resource_provider_,
-      AlphaFormatSupported(_))
-      .WillRepeatedly(Return(true));
-
+  expect_alpha();
   auto consume_frame = [&](int w,int h) {
     animation->GetFrameProvider()->GetFrame();
     expect_frame(w,h);
@@ -324,6 +325,28 @@ TEST_F(AnimatedWebPTest, Animated4) {
   AdvanceTimeMs(1000);
   // Expect looping back to first frame
   ASSERT_EQ(animation->GetCurrentFrameIndex(),0);
+}
+
+TEST_F(AnimatedWebPTest, Animated5) {
+  AdvanceTimeMs(9);
+  auto animation = image_from_file("webp-animated-opaque.webp");
+
+  animation->Play(task_runner_);
+  ASSERT_EQ(animation->GetCurrentFrameIndex(),0);
+
+  expect_alpha();
+
+  auto consume_frame = [&](int w,int h) {
+    animation->GetFrameProvider()->GetFrame();
+    expect_frame(w,h);
+  };
+  consume_frame(33,32);
+  AdvanceTimeMs(1);
+  ASSERT_EQ(animation->GetCurrentFrameIndex(),1);
+
+  consume_frame(33,32);
+  AdvanceTimeMs(2500);
+
 }
 
 } // namespace image

@@ -39,6 +39,8 @@ const int kMinimumDelayInMilliseconds = 10;
 
 }  // namespace
 
+#define LOGGING 0
+
 AnimatedWebPImage::AnimatedWebPImage(
     const math::Size& size, bool is_opaque,
     render_tree::ResourceProvider* resource_provider,
@@ -147,6 +149,8 @@ void AnimatedWebPImage::PlayInternal() {
     return;
   }
   is_playing_ = true;
+  underruns = 0;
+  overruns = 0;
 
   if (received_first_frame_) {
     StartDecoding();
@@ -169,7 +173,8 @@ void AnimatedWebPImage::StopInternal() {
 void AnimatedWebPImage::StartDecoding() {
   TRACE_EVENT0("cobalt::loader::image", "AnimatedWebPImage::StartDecoding()");
   DCHECK(task_runner_->RunsTasksInCurrentSequence());
-  current_frame_time_ = base::TimeTicks::Now();
+  decoding_start_time_ = current_frame_time_ = base::TimeTicks::Now();
+  total_decoded_frames = 0;
   DecodeFrames();
 }
 
@@ -217,13 +222,19 @@ void AnimatedWebPImage::DecodeFrames() {
   }
 
   auto now = base::TimeTicks::Now();
-  LOG(WARNING) << "DecodeFrames now:" << fmtTicks(now) << " current_frame:"<< current_frame_index_;
+  if(LOGGING) {
+    LOG(WARNING) << "DecodeFrames now:" << fmtTicks(now) << " current_frame:"<< current_frame_index_;
+  }
   if (AdvanceFrame()) {
-    LOG(WARNING) << "DecodeFrames: AdvanceFrame is true";
+    if(LOGGING) {
+      LOG(WARNING) << "DecodeFrames: AdvanceFrame is true";
+    }
     // Decode the frames from current frame to next frame and blend the results.
     DecodeOneFrame(current_frame_index_);
   } else {
-    LOG(WARNING) << "DecodeFrames: AdvanceFrame is false";
+    if(LOGGING) {
+      LOG(WARNING) << "DecodeFrames: AdvanceFrame is false";
+    }
   }
 
   // Set up the next time to call the decode callback.
@@ -236,10 +247,14 @@ void AnimatedWebPImage::DecodeFrames() {
       if (delay < min_delay) {
         delay = min_delay;
       }
-      LOG(WARNING) << "Have next_frametime, PostDelayedTask delaying for:" << delay;
+      if(LOGGING) {
+        LOG(WARNING) << "Have next_frametime, PostDelayedTask delaying for:" << delay;
+      }
     } else {
       delay = min_delay;
-      LOG(WARNING) << "No next_frametime, PostDelayedTask delaying for:" << delay;
+      if(LOGGING) {
+        LOG(WARNING) << "No next_frametime, PostDelayedTask delaying for:" << delay;
+      }
     }
 
     task_runner_->PostDelayedTask(FROM_HERE, decode_closure_.callback(), delay);
@@ -290,6 +305,7 @@ bool AnimatedWebPImage::DecodeOneFrame(int frame_index) {
       LOG(ERROR) << "Failed to decode WebP image frame.";
       return false;
     }
+    total_decoded_frames++;
   }
 
   // Alpha blend the current frame on top of the buffer.
@@ -354,10 +370,12 @@ bool AnimatedWebPImage::AdvanceFrame() {
   DCHECK(task_runner_->RunsTasksInCurrentSequence());
 
   base::TimeTicks current_time = base::TimeTicks::Now();
-  if(next_frame_time_) {
-    LOG(WARNING) << "\tAdvanceFrame time:" << fmtTicks(current_time) << " next_frame_time:" << fmtTicks(*next_frame_time_);
-  } else {
-    LOG(WARNING) << "\tAdvanceFrame time:" << fmtTicks(current_time);
+  if(LOGGING) {
+    if(next_frame_time_) {
+      LOG(WARNING) << "\tAdvanceFrame time:" << fmtTicks(current_time) << " next_frame_time:" << fmtTicks(*next_frame_time_);
+    } else {
+      LOG(WARNING) << "\tAdvanceFrame time:" << fmtTicks(current_time);
+    }
   }
   // If the WebP image hasn't been fully fetched, then stop on the current
   // frame.
@@ -380,7 +398,10 @@ bool AnimatedWebPImage::AdvanceFrame() {
   // Always wait for a consumer to consume the previous frame before moving
   // forward with decoding the next frame.
   if (!frame_provider_->FrameConsumed()) {
-    LOG(WARNING) << "Not consumed";
+    if(LOGGING) {
+      LOG(WARNING) << "Not consumed";
+    }
+    overruns++;
     return false;
   }
 
@@ -410,16 +431,23 @@ bool AnimatedWebPImage::AdvanceFrame() {
   // Update the time in the future at which point we should switch to the
   // frame after the new current frame.
   auto duration = GetFrameDuration(current_frame_index_);
-  LOG(WARNING) << "GetFrameDuration(current): " << duration;
+  if(LOGGING) {
+    LOG(WARNING) << "GetFrameDuration(current): " << duration;
+  }
   next_frame_time_ =
       current_frame_time_ + duration;
   if (next_frame_time_ < current_time) {
-    LOG(WARNING) << "clamping to current time";
+    if(LOGGING) {
+      LOG(WARNING) << "clamping to current time";
+    }
     // Don't let the animation fall back for more than a frame.
     next_frame_time_ = current_time;
+    underruns++;
   }
 
-  LOG(WARNING) << "next_frame_time set to " << fmtTicks(*next_frame_time_);
+  if(LOGGING) {
+    LOG(WARNING) << "next_frame_time set to " << fmtTicks(*next_frame_time_);
+  }
   return true;
 }
 

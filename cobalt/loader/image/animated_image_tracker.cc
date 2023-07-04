@@ -66,6 +66,7 @@ void AnimatedImageTracker::ProcessRecordedImages() {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   TRACE_EVENT0("cobalt::loader::image",
                "AnimatedImageTracker::ProcessRecordedImages()");
+  LOG(WARNING) << "--------------->ProcessRecordedImages";
   for (URLToIntMap::iterator it = current_url_counts_.begin();
        it != current_url_counts_.end();) {
     const GURL& url = it->first;
@@ -87,6 +88,7 @@ void AnimatedImageTracker::ProcessRecordedImages() {
         URLToImageMap::iterator playing_image = image_map_.find(url);
         if (playing_image != image_map_.end()) {
           playing_urls_.insert(std::make_pair(url, base::Unused()));
+          playing_image->second.get()->JustATest();
           OnDisplayStart(playing_image->second.get());
         }
       }

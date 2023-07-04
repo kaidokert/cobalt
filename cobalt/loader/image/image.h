@@ -130,6 +130,8 @@ class AnimatedImage : public Image {
   // Stop playing the animation.
   virtual void Stop() = 0;
 
+  virtual void JustATest() = 0;
+
   // Returns a FrameProvider object from which frames can be pulled out of.
   // The AnimatedImage object is expected to push frames into the FrameProvider
   // as it generates them.
