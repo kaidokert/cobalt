@@ -363,6 +363,9 @@ class WebModule::Impl {
   // Whether or not a render tree has been produced but not yet rasterized.
   base::CVal<bool, base::CValPublic> is_render_tree_rasterization_pending_;
 
+  // Boo
+  base::CVal<float, base::CValPublic> animated_image_frame_rate_;
+
   // Object that provides renderer resources like images and fonts.
   render_tree::ResourceProvider* resource_provider_;
   // The type id of resource provider being used by the WebModule. Whenever this
@@ -502,6 +505,11 @@ WebModule::Impl::Impl(web::Context* web_context, const ConstructionData& data)
           base::StringPrintf("%s.IsRenderTreeRasterizationPending",
                              web_context_->name().c_str()),
           false, "True when a render tree is produced but not yet rasterized."),
+      animated_image_frame_rate_(
+          base::StringPrintf("%s.AnimatedImageFrameRate",
+                             web_context_->name().c_str()),
+          0.0f, "Tracks aggregate frames per second for animated images."
+      ),
       resource_provider_(data.resource_provider),
       resource_provider_type_id_(data.resource_provider->GetTypeId()),
 #if defined(ENABLE_DEBUGGER)
