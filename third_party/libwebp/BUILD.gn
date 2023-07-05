@@ -85,8 +85,26 @@ libwebp_lib("libwebp_utils_enc") {
   sources = libwebp_utils_enc_sources
 }
 
+libwebp_lib("libwebp_format_dec") {
+  sources = libwebp_format_dec_sources
+  include_dirs = [ "./src" ]
+}
+libwebp_lib("libwebp_image_util") {
+  sources = libwebp_image_util_sources
+  include_dirs = [ "./src" ]
+}
+
 config("libwebp_direct_config") {
   include_dirs = [ "." ]
+  defines = []
+  if (is_starboard && (current_cpu == "x86" || current_cpu == "x64")) {
+    cflags = [ "-msse2","-msse4.2" ]
+    defines += [ "WEBP_HAVE_SSE2", "WEBP_HAVE_SSE41", "WEBP_HAVE_AVX2" ]
+  }  
+  if (is_starboard && current_cpu == "arm") {
+    defines += [ "WEBP_HAVE_NEON" ]
+    cflags = [ "-mfpu=neon" ]
+  }
 }
 
 group("libwebp") {
@@ -101,3 +119,27 @@ group("libwebp") {
     ":libwebp_utils_enc",
   ]
 }
+
+target(starboard_level_final_executable_type, "dwebp") {
+  include_dirs = [ "." , "./src" ]
+  public_configs = [ ":libwebp_direct_config" ]
+  sources = [
+    "examples/dwebp.c",
+    "examples/example_util.c"
+  ]
+  deps = [
+    ":libwebp",
+    ":libwebp_format_dec",
+    ":libwebp_image_util",
+    "//starboard"
+  ]
+  #ldflags = [
+    #"obj/third_party/libwebp/libwebp_dec.a",
+  #  "-Lobj/third_party/libwebp/"
+  #]
+  #libs = [
+  #  "webp_dec"
+  #]
+  # tail_lib_dependencies += [ "libwebp" ]
+}
+

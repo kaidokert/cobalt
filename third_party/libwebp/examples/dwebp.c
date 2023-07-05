@@ -49,8 +49,9 @@ static int SaveOutput(const WebPDecBuffer* const buffer,
   if (verbose) {
     StopwatchReset(&stop_watch);
   }
+#if 0
   ok = WebPSaveImage(buffer, format, out_file);
-
+#endif
   if (ok) {
     if (!quiet) {
       if (use_stdout) {

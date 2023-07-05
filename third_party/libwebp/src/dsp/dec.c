@@ -11,6 +11,9 @@
 //
 // Author: Skal (pascal.massimino@gmail.com)
 
+#include <stdio.h>
+
+
 #if defined(STARBOARD)
 #include "starboard/client_porting/poem/assert_poem.h"
 #include "starboard/client_porting/poem/string_poem.h"
@@ -839,8 +842,10 @@ WEBP_DSP_INIT_FUNC(VP8DspInit) {
   }
 
 #if defined(WEBP_USE_NEON)
+  printf("================>decoder check %p\n",VP8GetCPUInfo);
   if (WEBP_NEON_OMIT_C_CODE ||
       (VP8GetCPUInfo != NULL && VP8GetCPUInfo(kNEON))) {
+    printf("================>decoder check init NEON !!\n");
     VP8DspInitNEON();
   }
 #endif

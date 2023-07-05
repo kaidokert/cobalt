@@ -13,6 +13,43 @@
 
 #include "src/dsp/dsp.h"
 
+#if defined(STARBOARD)
+#include <stdio.h>
+
+static int StarboardGetCPUInfo(CPUFeature feature) {
+  switch(feature) {
+    case kSSE2:
+      printf("===============>Get kSSE2\n");
+      return 1;
+    case kSSE3:
+      printf("Get kSSE3\n");
+      return 1;
+    case kSSE4_1:
+      printf("Get kSSE4_1\n");
+      return 1;
+    case kAVX:
+      printf("Get kAVX\n");
+      return 1;
+    case kAVX2:
+      printf("Get kAVX2\n");
+      return 1;
+    case kNEON: {
+      printf("===============>Get kNEON===========\n");
+      fflush(stdout);
+      return 1;
+    }
+    case kSlowSSSE3:
+      printf("Get kSlowSSSE3\n");
+      return 0;
+    default:
+      return 0;
+  }
+}
+
+VP8CPUInfo VP8GetCPUInfo = StarboardGetCPUInfo;
+
+#else // STARBOARD
+
 #if defined(WEBP_HAVE_NEON_RTCD)
 #include <stdio.h>
 #include <string.h>
@@ -220,3 +257,5 @@ VP8CPUInfo VP8GetCPUInfo = mipsCPUInfo;
 #else
 VP8CPUInfo VP8GetCPUInfo = NULL;
 #endif
+
+#endif //STARBOARD
