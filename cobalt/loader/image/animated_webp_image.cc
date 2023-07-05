@@ -37,7 +37,7 @@ namespace image {
 namespace {
 
 const int kLoopInfinite = 0;
-const int kMinimumDelayInMilliseconds = 10;
+const int kMinimumDelayInMilliseconds = 2;
 
 }  // namespace
 
@@ -80,8 +80,10 @@ void AnimatedWebPImage::Play(
   // This ensures that it's safe to set |task_runner_| without holding a lock.
   if (!task_runner_) {
     //task_runner_ = task_runner;
+    constexpr base::TaskTraits kTraits = {base::TaskPriority::USER_VISIBLE,
+                                          base::MayBlock()};
     task_runner_ = 
-      base::CreateSequencedTaskRunnerWithTraits(base::TaskTraits());
+      base::CreateSequencedTaskRunnerWithTraits(kTraits);
   } else {
     //DCHECK_EQ(task_runner_, task_runner);
   }
@@ -402,10 +404,12 @@ bool AnimatedWebPImage::AdvanceFrame() {
   // Always wait for a consumer to consume the previous frame before moving
   // forward with decoding the next frame.
   if (!frame_provider_->FrameConsumed()) {
-    if(1) {
+    if(0) {
       LOG(WARNING) << "Not consumed";
     }
     overruns++;
+    // perhaps drop it ?
+    //frame_provider_->GetFrame();
     return false;
   }
 
@@ -415,37 +419,43 @@ bool AnimatedWebPImage::AdvanceFrame() {
     current_frame_time_ = current_time;
   }
 
-  ++current_frame_index_;
-  if (current_frame_index_ == frame_count_) {
-    // Check if we have finished looping, and if so return indicating that there
-    // is no additional frame available.
-    if (LoopingFinished()) {
-      next_frame_time_ = base::nullopt;
-      LOG(WARNING) << "Loop finished, next_frame_time = null";
+  auto advanceframe = [&]() -> bool {
+    ++current_frame_index_;
+    if (current_frame_index_ == frame_count_) {
+      // Check if we have finished looping, and if so return indicating that there
+      // is no additional frame available.
+      if (LoopingFinished()) {
+        next_frame_time_ = base::nullopt;
+        LOG(WARNING) << "Loop finished, next_frame_time = null";
+        return false;
+      }
+
+      // Loop around to the beginning
+      current_frame_index_ = 0;
+      if (loop_count_ != kLoopInfinite) {
+        loop_count_--;
+      }
+    }
+    // Update the time in the future at which point we should switch to the
+    // frame after the new current frame.
+    auto duration = GetFrameDuration(current_frame_index_);
+    if(LOGGING) {
+      LOG(WARNING) << "GetFrameDuration(current): " << duration;
+    }
+    next_frame_time_ = current_frame_time_ + duration;
+    return true;
+  };
+  if(!advanceframe())
       return false;
-    }
 
-    // Loop around to the beginning
-    current_frame_index_ = 0;
-    if (loop_count_ != kLoopInfinite) {
-      loop_count_--;
-    }
-  }
-
-  // Update the time in the future at which point we should switch to the
-  // frame after the new current frame.
-  auto duration = GetFrameDuration(current_frame_index_);
-  if(LOGGING) {
-    LOG(WARNING) << "GetFrameDuration(current): " << duration;
-  }
-  next_frame_time_ =
-      current_frame_time_ + duration;
   if (next_frame_time_ < current_time) {
-    if(1) {
+    if(0) {
       LOG(WARNING) << "clamping to current time";
     }
+    //if(!advanceframe())
+    //    return false;
     // Don't let the animation fall back for more than a frame.
-    next_frame_time_ = current_time;
+    //next_frame_time_ = current_time;
     underruns++;
   }
 
