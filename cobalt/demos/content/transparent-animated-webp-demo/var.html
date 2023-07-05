@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!--
+ | Demo to help test animated webp with transparent backgrounds.  Sets up
+ | two different animated webp images where one renders its frames using
+ | no blending when applying the new image over the existing one, and the
+ | other disposes to the background (which is alpha) as it runs through its
+ | frames.
+ -->
+<html>
+
+<head>
+  <style>
+    body {
+      background-color: white;
+    }
+
+    .layer {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+    }
+
+    @keyframes background-anim {
+      from {
+        background-color: green;
+      }
+
+      to {
+        background-color: blue;
+      }
+    }
+
+    .background {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      background-color: green;
+      animation: background-anim 5s alternate-reverse infinite ease-in-out;
+    }
+
+    .image {
+      width: 100px;
+      height: 100px;
+      background-size: contain;
+      display: inline-block;
+    }
+  </style>
+  <script>
+    window.onload = () => {
+      var sz = 100;
+      var search = window.location.search;
+      var num = 1;
+
+      var matches = search.matchAll(/var=([0-9]+)/gm);
+      for (const match of matches) {
+        num = match[1]
+      }
+      var matches = search.matchAll(/sz=([0-9]+)/gm);
+      for (const match of matches) {
+        sz = match[1]
+      }
+
+      var layer = document.getElementById('layer');
+      function addImage(img, sz) {
+        var el = document.createElement('span');
+        console.log(`adding ${img}`);
+        el.classList.add('image');
+        el.style['backgroundImage'] = `url(${img}.webp)`;
+        el.style['width'] = `${sz}px`;
+        el.style['height'] = `${sz}px`;
+        layer.appendChild(el)
+        console.log("Added image");
+      }
+      var images = [
+        "1_fan","2_heart","3_cry","4_clap", "5_egg",
+        "6_party","7_rofl","8_melt","9_explode","10_turtle"
+      ]
+      for(i = 0; i< num; i++)  {
+        (function(i) {
+          var img = images[i % 10];
+          window.setTimeout( () => {  addImage(img,sz) } , 1 + i*40);
+        })(i)
+      }
+    }
+  </script>
+  <!--link rel="splashscreen" href="https://545450540-dev-kaidokert-dot-cobalt-tools.wn.r.appspot.com/static/selfclosing_splash.html"></link-->
+</head>
+
+<body>
+  <div class="background"></div>
+
+  <div class="layer" id="layer"></div>
+</body>
+
+</html>
