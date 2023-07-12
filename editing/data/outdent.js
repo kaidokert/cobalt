@@ -1,3 +1,4 @@
+// For documentation of the format, see README in this directory.
 var browserTests = [
 ["<blockquote><p>foo[bar]</p><p>baz</p></blockquote><p>extra",
     [["outdent",""]],
@@ -83,7 +84,7 @@ var browserTests = [
     [["stylewithcss","true"],["defaultparagraphseparator","div"],["outdent",""]],
     "<div class=\"webkit-indent-blockquote\"><p>foo[bar]</p><blockquote><p>baz</p></blockquote></div><p>extra</p>",
     [true,true,true],
-    {"stylewithcss":[false,false,"",false,true,""],"defaultparagraphseparator":[false,false,"p",false,false,"div"],"outdent":[false,false,"",false,false,""]}],
+    {"stylewithcss":[false,false,"",false,true,""],"defaultparagraphseparator":[false,false,"div",false,false,"div"],"outdent":[false,false,"",false,false,""]}],
 ["<blockquote class=\"webkit-indent-blockquote\" style=\"margin: 0 0 0 40px; border: none; padding: 0px;\"><p>foo[bar]</p><p>baz</p></blockquote><p>extra",
     [["stylewithcss","false"],["defaultparagraphseparator","div"],["outdent",""]],
     "<div class=\"webkit-indent-blockquote\"><p>foo[bar]</p><blockquote><p>baz</p></blockquote></div><p>extra</p>",
@@ -872,6 +873,11 @@ var browserTests = [
 ["<blockquote><span>foo<br>[bar]</span></blockquote>",
     [["outdent",""]],
     "<blockquote>foo</blockquote><span>[bar]</span>",
+    [true],
+    {"outdent":[false,false,"",false,false,""]}],
+["<ul><ul><li><span style=\"color:rgb(255, 0, 0)\">[]foo</span></li></ul></ul>",
+    [["outdent",""]],
+    "<ul><li><span style=\"color:rgb(255, 0, 0)\">[]foo</span></li></ul>",
     [true],
     {"outdent":[false,false,"",false,false,""]}]
 ]

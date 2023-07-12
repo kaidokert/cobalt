@@ -15,14 +15,14 @@
 8. If A's length is less than B's length, then A is less than B. If A's length is greater than B's length, then A is greater than B. Otherwise A and B are equal.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="support.js"></script>
+<script src="resources/support.js"></script>
 
 <script>
     var global_db = createdb_for_multiple_tests();
 
     function keysort(desc, unsorted, expected) {
         var db,
-            t = async_test("Database readback sort - " + desc, { timeout: 10000 }),
+            t = async_test("Database readback sort - " + desc),
             store_name = 'store-' + Date.now() + Math.random();
 
         // The database test

@@ -1,18 +1,32 @@
 <!DOCTYPE html>
-<html>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
 <script>
-    var msg = "";
-    screen.orientation.lock("portrait-primary").then(function() {
-        msg = screen.orientation.type;
-    }, function(error) {
-        msg = error.name;
-    });
+test_driver.set_test_context(parent);
 
-    // FIXME: for the moment, tests gets notified when there is a failure but
-    // not a success, this hack should allow us to still have the test running.
-    // That should be removed as soon as we get a resolved promise in tests.
-    setTimeout(function() {
-        parent.window.postMessage(msg, "*");
-    })
+// At first, run simple unlock test without lock.
+screen.orientation?.unlock();
+
+test_driver.bless("request full screen", async () => {
+  const data = {};
+  try {
+    await document.documentElement.requestFullscreen();
+    await screen.orientation.lock("portrait")
+    data.result = "locked";
+    data.orientation = screen.orientation.type;
+  } catch (error) {
+    data.result = "errored";
+    data.name = error.name;
+  }
+
+  screen.orientation.unlock();
+  try {
+    await document.exitFullscreen();
+  } catch (error) {
+    data.result = "errored";
+    data.name = error.name;
+  }
+
+  parent.window.postMessage(data, "*");
+});
 </script>
-</html>

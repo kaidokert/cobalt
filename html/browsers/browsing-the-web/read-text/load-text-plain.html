@@ -2,7 +2,6 @@
 <title>Page load processing model for text files</title>
 <link rel="author" title="Ms2ger" href="ms2ger@gmail.com">
 <link rel="help" href="https://html.spec.whatwg.org/multipage/#read-text">
-<link rel="stylesheet" href="/resources/testharness.css">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <div id="log"></div>
@@ -14,7 +13,7 @@ var iframe = document.body.appendChild(document.createElement("iframe"));
 iframe.onload = function(e) {
   var doc = iframe.contentDocument;
   t.step(function() {
-    assert_equals(doc.compatMode, "BackCompat");
+    assert_equals(doc.compatMode, "CSS1Compat");
     assert_equals(doc.contentType, "text/plain");
     assert_equals(doc.doctype, null);
     t.done();

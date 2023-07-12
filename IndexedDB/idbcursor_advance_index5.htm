@@ -6,12 +6,12 @@
 <link rel=assert title="The number of advances forward the cursor should make.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="support.js"></script>
+<script src="resources/support.js"></script>
 
 <script>
     var db,
       count = 0,
-      t = async_test(document.title, {timeout: 10000}),
+      t = async_test(),
       records = [ { pKey: "primaryKey_0",   iKey: "indexKey_0" },
                   { pKey: "primaryKey_1",   iKey: "indexKey_1" },
                   { pKey: "primaryKey_1-2", iKey: "indexKey_1" } ],
@@ -30,7 +30,7 @@
     };
 
     open_rq.onsuccess = function(e) {
-        var cursor_rq = db.transaction("test")
+        var cursor_rq = db.transaction("test", "readonly", {durability: 'relaxed'})
                           .objectStore("test")
                           .index("index")
                           .openCursor();

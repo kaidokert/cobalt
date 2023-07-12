@@ -6,12 +6,12 @@
 <meta name=timeout content=long>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="support.js"></script>
+<script src="resources/support.js"></script>
 
 <script>
     function keypath(keypath, objects, expected_keys, desc) {
         var db,
-            t = async_test(document.title + " - " + (desc ? desc : keypath), { timeout: 10000 }),
+            t = async_test(document.title + " - " + (desc ? desc : keypath)),
             open_rq = createdb(t);
 
         open_rq.onupgradeneeded = function(e) {
@@ -28,7 +28,7 @@
 
         open_rq.onsuccess = function(e) {
             var actual_keys = [],
-                rq = db.transaction("store")
+                rq = db.transaction("store", "readonly", {durability: 'relaxed'})
                        .objectStore("store")
                        .openCursor();
 

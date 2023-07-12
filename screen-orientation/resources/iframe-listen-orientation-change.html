@@ -1,6 +1,9 @@
-<!DOCTYPE html>
 <script>
-    window.screen.orientation.addEventListener('change', function() {
-        parent.window.postMessage(screen.orientation.type, "*");
+  try {
+    window.screen.orientation.addEventListener("change", () => {
+      parent.window.postMessage(screen.orientation.type, "*");
     });
+  } catch (err) {
+    parent.window.postMessage(err.message, "*");
+  }
 </script>

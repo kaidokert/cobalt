@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Copyright © 2016 Chromium authors and World Wide Web Consortium, (Massachusetts Institute of Technology, ERCIM, Keio University, Beihang). -->
 <html>
     <head>
         <title>MediaSource.isTypeSupported() test cases.</title>
@@ -30,23 +31,40 @@
               'video/webm;codecs="',
               'video/webm;codecs=""',
               'video/webm;codecs=","',
+              'audio/webm;aaacodecsbbb=opus',
+              'unsupported_mediatype',
               '',
               null
           ], false, 'Test invalid MIME format');
 
           test_type_support([
-              'audio/webm;codecs="vp8"',
-              'audio/mp4;codecs="avc1.4d001e"',
-          ], false, 'Test invalid mismatch between major type and codec ID');
+              'xxx',
+              'text/html',
+              'image/jpeg'
+          ], false, 'Test invalid MSE MIME media type');
 
           test_type_support([
+              'audio/webm;codecs="vp8"',
+              'audio/mp4;codecs="avc1.4d001e"',
               'audio/mp4;codecs="vorbis"',
               'audio/webm;codecs="mp4a.40.2"',
               'video/mp4;codecs="vp8"',
-              'video/webm;codecs="mp4a.40.2"',
               'video/mp4;codecs="vorbis"',
               'video/webm;codecs="mp4a.40.2"',
-          ], false, 'Test invalid mismatch between minor type and codec ID');
+          ], false, 'Test invalid mismatch between MIME type and codec ID');
+
+          // Note that, though the user agent might support some subset of
+          // these for progressive non-MSE playback, the MSE mpeg audio
+          // bytestream format specification requires there to be no codecs
+          // parameter.
+          test_type_support([
+              'audio/mpeg;codecs="mp3"',
+              'audio/mpeg;codecs="mp4a.69"',
+              'audio/mpeg;codecs="mp4a.6B"',
+              'audio/aac;codecs="aac"',
+              'audio/aac;codecs="adts"',
+              'audio/aac;codecs="mp4a.40"',
+          ], false, 'Test invalid inclusion of codecs parameter for mpeg audio types');
 
           test_type_support([
               'audio/mp4;codecs="mp4a"',
@@ -62,6 +80,9 @@
               'video/webm;codecs="vorbis, vp8"',
               'audio/webm;codecs="vorbis"',
               'AUDIO/WEBM;CODECS="vorbis"',
+              'audio/webm;codecs=vorbis;test="6"',
+              'audio/webm;codecs="opus"',
+              'video/webm;codecs="opus"'
           ], true, 'Test valid WebM type');
 
           test_type_support([
@@ -74,7 +95,12 @@
               'video/mp4;codecs="avc1.4d001e,mp4a.40.2"',
               'video/mp4;codecs="mp4a.40.2 , avc1.4d001e "',
               'video/mp4;codecs="avc1.4d001e,mp4a.40.5"',
+              'audio/mp4;codecs="Opus"',
+              'video/mp4;codecs="Opus"',
+              'audio/mp4;codecs="fLaC"',
+              'video/mp4;codecs="fLaC"'
           ], true, 'Test valid MP4 type');
+
         </script>
     </body>
 </html>

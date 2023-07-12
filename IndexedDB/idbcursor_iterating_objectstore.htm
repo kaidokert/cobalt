@@ -3,12 +3,12 @@
 <link rel="author" href="mailto:odinho@opera.com" title="Odin Hørthe Omdal">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="support.js"></script>
+<script src="resources/support.js"></script>
 
 <script>
     var db,
       count = 0,
-      t = async_test(document.title, {timeout: 10000}),
+      t = async_test(),
       records = [ { pKey: "primaryKey_0" },
                   { pKey: "primaryKey_1" },
                   { pKey: "primaryKey_2" } ],
@@ -18,6 +18,7 @@
     var open_rq = createdb(t);
     open_rq.onupgradeneeded = function(e) {
         db = e.target.result;
+        t.add_cleanup(function() { db.close(); indexedDB.deleteDatabase(db.name); });
         var objStore = db.createObjectStore("test", {keyPath:"pKey"});
 
         for (var i = 0; i < records.length; i++)
@@ -25,7 +26,7 @@
     };
 
     open_rq.onsuccess = function(e) {
-        var cursor_rq = db.transaction("test", "readwrite")
+        var cursor_rq = db.transaction("test", "readwrite", {durability: 'relaxed'})
                           .objectStore("test")
                           .openCursor();
 
@@ -47,5 +48,3 @@
         });
     };
 </script>
-
-<div id="log"> </div>

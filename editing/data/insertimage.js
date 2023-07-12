@@ -1,3 +1,4 @@
+// For documentation of the format, see README in this directory.
 var browserTests = [
 ["foo[]bar",
     [["insertimage","/img/lion.svg"]],
@@ -128,7 +129,7 @@ var browserTests = [
     [["defaultparagraphseparator","div"],["insertimage","/img/lion.svg"]],
     "<p>foo</p><img src=\"/img/lion.svg\">{}<p>baz</p>",
     [true,true],
-    {"defaultparagraphseparator":[false,false,"p",false,false,"div"],"insertimage":[false,false,"",false,false,""]}],
+    {"defaultparagraphseparator":[false,false,"div",false,false,"div"],"insertimage":[false,false,"",false,false,""]}],
 ["<p>foo</p>{<p>bar</p>}<p>baz</p>",
     [["defaultparagraphseparator","p"],["insertimage","/img/lion.svg"]],
     "<p>foo</p><img src=\"/img/lion.svg\">{}<p>baz</p>",
@@ -348,5 +349,10 @@ var browserTests = [
     [["insertimage","/img/lion.svg"]],
     "<div>foo<p>bar<img src=\"/img/lion.svg\">{}baz</p></div>",
     [true],
-    {"insertimage":[false,false,"",false,false,""]}]
+    {"insertimage":[false,false,"",false,false,""]}],
+["foo[]bar",
+    [["insertimage","/\u65E5\u672C\u8A9E\u30D1\u30B9/lion.svg"]],
+    "foo<img src=\"/\u65E5\u672C\u8A9E\u30D1\u30B9/lion.svg\">{}bar",
+    [true],
+    {"insertimage":[false,false,"",false,false,""]}],
 ]

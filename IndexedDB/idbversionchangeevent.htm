@@ -6,17 +6,20 @@
 <link rel=assert title="Fire a upgradeneeded event targeted at request. The event must use the IDBVersionChangeEvent interface and have the oldVersion property set to old version and have the newVersion property set to version.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="support.js"></script>
+<script src="resources/support.js"></script>
 
 <div id="log"></div>
 
 <script>
 
     var db,
-        t = async_test(document.title, {timeout: 10000});
+        t = async_test(),
+        dbname = location + '-' + t.name;
 
     t.step(function() {
-        var openrq = indexedDB.open('db', 3);
+        indexedDB.deleteDatabase(dbname);
+
+        var openrq = indexedDB.open(dbname, 3);
 
         openrq.onupgradeneeded = t.step_func(function(e) {
             assert_equals(e.oldVersion, 0, "old version (upgradeneeded)");
@@ -48,11 +51,29 @@
     });
 
     function deleteDB (e) {
-        var deleterq = indexedDB.deleteDatabase('db');
+        var deleterq = indexedDB.deleteDatabase(dbname);
 
         deleterq.onsuccess = t.step_func(function(e) {
+            assert_equals(e.result, undefined, "result (delete.success for nonexistent db)");
             assert_equals(e.oldVersion, 3, "old version (delete.success)");
             assert_equals(e.newVersion, null, "new version (delete.success)");
+            assert_true(e instanceof IDBVersionChangeEvent, "delete.success instanceof IDBVersionChangeEvent");
+
+            setTimeout(deleteNonExistentDB, 10);
+        });
+
+        // Errors
+        deleterq.onerror = fail(t, "delete.error");
+        deleterq.onblocked = fail(t, "delete.blocked");
+    }
+
+    function deleteNonExistentDB (e) {
+        var deleterq = indexedDB.deleteDatabase('db-does-not-exist');
+
+        deleterq.onsuccess = t.step_func(function(e) {
+            assert_equals(e.result, undefined, "result (delete.success for nonexistent db)");
+            assert_equals(e.oldVersion, 0, "old version (delete.success for nonexistent db)");
+            assert_equals(e.newVersion, null, "new version (delete.success for nonexistent db)");
             assert_true(e instanceof IDBVersionChangeEvent, "delete.success instanceof IDBVersionChangeEvent");
 
             setTimeout(function() { t.done(); }, 10);

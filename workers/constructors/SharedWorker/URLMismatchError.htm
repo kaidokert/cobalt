@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>Web Workers: SharedWorker - throw URLMismatchError</title>
+<title>Web Workers: SharedWorker - same name, different URL</title>
 <link rel="author" title="Intel" href="http://www.intel.com">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<div id="log"></div>
 <script>
+setup({ single_test: true });
 
-  test(function() {
-    var worker = new SharedWorker('shared-worker.js', 'name');
+let counter = 0
+const maybeDone = () => {
+  if(counter) {
+    done()
+  }
+  counter++
+}
 
-    assert_throws("URLMismatchError", function() {
-      new SharedWorker('some-other-url.js', 'name');
-    });
+const worker = new SharedWorker('shared-worker.js', 'name');
+worker.port.postMessage("trigger a response")
+worker.port.onmessage = e => {
+  assert_equals(e.data, "ping")
+  maybeDone()
+}
 
-  }, "Create SharedWorker with different URLs but same name");
-
+// This used to throw "URLMismatchError", but the standard changed
+const worker2 = new SharedWorker('1', 'name');
+worker2.port.onmessage = e => {
+  assert_array_equals(e.data, ["1", "name"])
+  maybeDone()
+}
 </script>

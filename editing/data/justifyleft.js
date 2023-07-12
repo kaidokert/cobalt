@@ -1,3 +1,4 @@
+// For documentation of the format, see README in this directory.
 var browserTests = [
 ["foo[]bar<p>extra",
     [["justifyleft",""]],
@@ -53,7 +54,7 @@ var browserTests = [
     [["stylewithcss","true"],["defaultparagraphseparator","div"],["justifyleft",""]],
     "<center><div style=\"text-align:left\"><p>[foo]</p></div><p>bar</p></center><p>extra</p>",
     [true,true,true],
-    {"stylewithcss":[false,false,"",false,true,""],"defaultparagraphseparator":[false,false,"p",false,false,"div"],"justifyleft":[false,false,"center",false,true,"left"]}],
+    {"stylewithcss":[false,false,"",false,true,""],"defaultparagraphseparator":[false,false,"div",false,false,"div"],"justifyleft":[false,false,"center",false,true,"left"]}],
 ["<center><p>[foo]<p>bar</center><p>extra",
     [["stylewithcss","false"],["defaultparagraphseparator","div"],["justifyleft",""]],
     "<center><div style=\"text-align:left\"><p>[foo]</p></div><p>bar</p></center><p>extra</p>",
@@ -743,5 +744,23 @@ var browserTests = [
     [["justifyleft",""]],
     "<div align=\"left\"><p>foo</p></div> <p>[bar]</p> <div align=\"left\"><p>baz</p></div>",
     [true],
-    {"justifyleft":[false,true,"left",false,true,"left"]}]
+    {"justifyleft":[false,true,"left",false,true,"left"]}],
+["<div contenteditable=false align=left><p contenteditable>f[]oo</p></div>",
+    [],
+    ["<div contenteditable=\"false\" align=\"left\"><p contenteditable=\"\">foo</p></div>",
+     "<div align=\"left\" contenteditable=\"false\"><p contenteditable=\"\">foo</p></div>"],
+    [true],
+    {"justifyleft":[false,true,"left",false,true,"left"],
+     "justifycenter":[false,false,"left",false,false,"left"],
+     "justifyfull":[false,false,"left",false,false,"left"],
+     "justifyright":[false,false,"left",false,false,"left"]}],
+["<div contenteditable=false style=text-align:left><p contenteditable>f[]oo</p></div>",
+    [],
+    ["<div contenteditable=\"false\" style=\"text-align:left\"><p contenteditable=\"\">foo</p></div>",
+     "<div style=\"text-align:left\" contenteditable=\"false\"><p contenteditable=\"\">foo</p></div>"],
+    [true],
+    {"justifyleft":[false,true,"left",false,true,"left"],
+     "justifycenter":[false,false,"left",false,false,"left"],
+     "justifyfull":[false,false,"left",false,false,"left"],
+     "justifyright":[false,false,"left",false,false,"left"]}],
 ]
