@@ -2252,7 +2252,7 @@ dictionary DragEventInit : MouseEventInit {
 // Window.
 typedef Window WindowProxy;
 
-[Global]
+[PrimaryGlobal]
 /*sealed*/ interface Window : EventTarget {
   // the current browsing context
   [Unforgeable] readonly attribute WindowProxy window;

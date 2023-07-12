@@ -1,6 +1,5 @@
 #!/usr/bin/python
-import json
-from six.moves.urllib import parse as urlparse
+import urlparse, json
 from mod_pywebsocket import common, msgutil, util
 from mod_pywebsocket.handshake import hybi
 from wptserve import stash

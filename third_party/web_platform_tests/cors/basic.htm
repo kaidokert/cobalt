@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset=utf-8>
 <title>Basic CORS</title>
-<link rel=help href=https://fetch.spec.whatwg.org/>
+<meta name=help href=http://dvcs.w3.org/hg/cors/raw-file/tip/Overview.html#simple-cross-origin-request-0>
 <meta name=author title="Odin Hørthe Omdal" href="mailto:odiho@opera.com">
 
 <script src=/resources/testharness.js></script>
@@ -56,9 +56,8 @@ cors("Same domain different port", "http", undefined, PORT);
 
 cors("Cross domain different port", "http", "www1", PORT);
 
-// https is not well supported on WPT servers as reported in the w3c repo
-//cors("Cross domain different protocol", "https", "www1", PORTS);
+cors("Cross domain different protocol", "https", "www1", PORTS);
 
-//cors("Same domain different protocol different port", "https", undefined, PORTS);
+cors("Same domain different protocol different port", "https", undefined, PORTS);
 
 </script>

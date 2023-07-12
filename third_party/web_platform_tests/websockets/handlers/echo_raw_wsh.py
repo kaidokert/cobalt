@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-import six
 from mod_pywebsocket import msgutil
+import urllib
 
 
 def web_socket_do_extra_handshake(request):
@@ -10,9 +10,6 @@ def web_socket_do_extra_handshake(request):
 def web_socket_transfer_data(request):
     while True:
         line = msgutil.receive_message(request)
-        if line == b'exit':
+        if line == 'exit':
             return
-        if line is not None:
-            if isinstance(line, six.string_types):
-                line = line.encode()
-            request.connection.write(line)
+        request.connection.write(line.decode("string-escape"))

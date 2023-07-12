@@ -1,6 +1,5 @@
 #!/usr/bin/python
-import six
-from mod_pywebsocket import common
+from mod_pywebsocket import msgutil
 
 _GOODBYE_MESSAGE = u'Goodbye'
 
@@ -17,20 +16,10 @@ def web_socket_transfer_data(request):
         line = request.ws_stream.receive_message()
         if line is None:
             return
-        if isinstance(line, six.text_type):
+        if isinstance(line, unicode):
             request.ws_stream.send_message(line, binary=False)
             if line == _GOODBYE_MESSAGE:
                 return
         else:
             request.ws_stream.send_message(line, binary=True)
 
-def web_socket_passive_closing_handshake(request):
-    # Echo close status code and reason
-    code, reason = request.ws_close_code, request.ws_close_reason
-
-    # No status received is a reserved pseudo code representing an empty code,
-    # so echo back an empty code in this case.
-    if code == common.STATUS_NO_STATUS_RECEIVED:
-        code = None
-
-    return code, reason

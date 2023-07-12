@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-<!--
- | This test was modified to not use the HTML4 intrinsic event 'body onload='.
- -->
 <html>
 
 <head>
@@ -16,10 +13,10 @@ default-src about:; script-src 'self' 'unsafe-inline' 'self' 'unsafe-inline'; co
 -->
 </head>
 
-<body>
+<body onload="alert_assert(&apos;PASS 2 of 2&apos;)">
     <script>
         alert_assert('PASS 1 of 2');
-        document.body.onload=function() { alert_assert('PASS 2 of 2'); }
+
     </script>
     <div id="log"></div>
     <script async defer src="../support/checkReport.sub.js?reportExists=false"></script>

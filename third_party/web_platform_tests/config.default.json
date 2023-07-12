@@ -6,9 +6,9 @@
           "https":[8443],
           "ws":["auto"],
           "wss":["auto"]},
- "check_subdomains": false,
+ "check_subdomains": true,
  "log_level":"debug",
- "bind_hostname": false,
+ "bind_hostname": true,
  "ssl": {"type": "openssl",
          "encrypt_after_connect": false,
          "openssl": {
