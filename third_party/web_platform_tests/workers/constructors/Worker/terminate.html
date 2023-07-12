@@ -1,21 +1,13 @@
-<!--
-(function f() {
-  postMessage(1);
-  setTimeout(f, 0);
-})();
-/*
--->
 <!doctype html>
 <title>terminate()</title>
 <link rel=help href="http://www.whatwg.org/html/#dom-worker-terminate">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="../../workers.js"></script>
 <div id="log"></div>
 <script>
 var t = async_test();
 t.step(function() {
-  var worker = new Worker('#');
+  var worker = new Worker('terminate.js');
   var i = 0;
   var expected;
 
@@ -40,6 +32,3 @@ t.step(function() {
   }), 100);
 });
 </script>
-<!--
-*/
-//-->

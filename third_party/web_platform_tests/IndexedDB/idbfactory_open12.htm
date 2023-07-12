@@ -3,11 +3,11 @@
 <link rel="author" href="mailto:odinho@opera.com" title="Odin Hørthe Omdal">
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
-<script src=support.js></script>
+<script src=resources/support.js></script>
 
 <script>
     var db;
-    var open_rq = createdb(async_test(document.title, {timeout: 10000}), undefined, 9);
+    var open_rq = createdb(async_test(document.title), undefined, 9);
     var open2_t = async_test(document.title + " - second upgrade");
 
     open_rq.onupgradeneeded = function(e) {

@@ -4,12 +4,12 @@
 <link rel="author" href="mailto:odinho@opera.com" title="Odin Hørthe Omdal">
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
-<script src=support.js></script>
+<script src=resources/support.js></script>
 
 <script>
     var events = [];
 
-    var open_rq = createdb(async_test(document.title, {timeout: 10000}));
+    var open_rq = createdb(async_test());
     open_rq.onupgradeneeded = function(e) {
         var db = e.target.result;
         var txn = e.target.transaction;

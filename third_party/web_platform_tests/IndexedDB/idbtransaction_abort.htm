@@ -4,11 +4,11 @@
 <link rel="author" href="mailto:odinho@opera.com" title="Odin Hørthe Omdal">
 <script src=/resources/testharness.js></script>
 <script src=/resources/testharnessreport.js></script>
-<script src=support.js></script>
+<script src=resources/support.js></script>
 
 <script>
     var db, aborted,
-      t = async_test(document.title, {timeout: 10000}),
+      t = async_test(),
       record = { indexedProperty: "bar" };
 
     var open_rq = createdb(t);

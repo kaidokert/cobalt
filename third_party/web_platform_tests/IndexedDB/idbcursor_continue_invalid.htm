@@ -3,12 +3,12 @@
 <link rel="author" href="mailto:odinho@opera.com" title="Odin Hørthe Omdal">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="support.js"></script>
+<script src="resources/support.js"></script>
 
 <script>
 
     var db,
-      t = async_test(document.title, {timeout: 10000});
+      t = async_test();
 
     var open_rq = createdb(t);
     open_rq.onupgradeneeded = function(e) {
@@ -23,7 +23,7 @@
 
     open_rq.onsuccess = function(e) {
         var count = 0;
-        var cursor_rq = db.transaction("test")
+        var cursor_rq = db.transaction("test", "readonly", {durability: 'relaxed'})
                           .objectStore("test")
                           .index("index")
                           .openCursor();
@@ -39,10 +39,10 @@
             cursor.continue(undefined);
 
             // Second try
-            assert_throws('InvalidStateError',
+            assert_throws_dom('InvalidStateError',
                 function() { cursor.continue(); }, 'second continue');
 
-            assert_throws('InvalidStateError',
+            assert_throws_dom('InvalidStateError',
                 function() { cursor.continue(3); }, 'third continue');
 
             count++;
