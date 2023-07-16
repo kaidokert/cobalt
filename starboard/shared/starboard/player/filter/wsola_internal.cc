@@ -30,7 +30,6 @@
 #include <memory>
 
 #include "starboard/common/log.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/memory.h"
 
 // TODO: Detect Neon on ARM platform and enable SIMD.

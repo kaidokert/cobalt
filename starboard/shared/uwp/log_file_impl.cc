@@ -15,10 +15,10 @@
 #include "starboard/shared/uwp/log_file_impl.h"
 
 #include <ppltasks.h>
+#include <memory>
 #include <string>
 
 #include "starboard/common/mutex.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/common/string.h"
 #include "starboard/once.h"
 #include "starboard/shared/uwp/log_writer_uwp.h"
@@ -36,7 +36,7 @@ class LogFileImpl {
  public:
   static LogFileImpl* GetInstance();
 
-  void OpenUWP(StorageFolder^ folder, const char* filename) {
+  void OpenUWP(StorageFolder ^ folder, const char* filename) {
     ScopedLock lock(mutex_);
     impl_.reset();
     impl_ = CreateLogWriterUWP(folder, filename);
@@ -63,7 +63,7 @@ class LogFileImpl {
  private:
   LogFileImpl() {}
   starboard::Mutex mutex_;
-  starboard::scoped_ptr<ILogWriter> impl_;
+  std::unique_ptr<ILogWriter> impl_;
 };
 
 SB_ONCE_INITIALIZE_FUNCTION(LogFileImpl, LogFileImpl::GetInstance);
@@ -74,7 +74,7 @@ void CloseLogFile() {
   LogFileImpl::GetInstance()->Close();
 }
 
-void OpenLogFileUWP(StorageFolder^ folder, const char* filename) {
+void OpenLogFileUWP(StorageFolder ^ folder, const char* filename) {
   LogFileImpl::GetInstance()->OpenUWP(folder, filename);
 }
 

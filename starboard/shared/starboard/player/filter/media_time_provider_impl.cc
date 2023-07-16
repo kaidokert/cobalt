@@ -23,7 +23,7 @@ namespace player {
 namespace filter {
 
 MediaTimeProviderImpl::MediaTimeProviderImpl(
-    scoped_ptr<MonotonicSystemTimeProvider> system_time_provider)
+    std::unique_ptr<MonotonicSystemTimeProvider> system_time_provider)
     : system_time_provider_(system_time_provider.Pass()) {
   SB_DCHECK(system_time_provider_);
 }

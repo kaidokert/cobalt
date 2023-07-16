@@ -16,7 +16,6 @@
 
 #include <utility>
 
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/memory.h"
 
 namespace starboard {

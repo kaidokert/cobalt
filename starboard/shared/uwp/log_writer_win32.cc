@@ -14,16 +14,16 @@
 
 #include "starboard/shared/uwp/log_writer_win32.h"
 
+#include <memory>
 #include <string>
 
 #include "starboard/common/file.h"
 #include "starboard/common/log.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/common/semaphore.h"
 #include "starboard/common/string.h"
 
-using starboard::scoped_ptr;
 using starboard::ScopedFile;
+using std::unique_ptr;
 
 namespace starboard {
 namespace shared {
@@ -35,20 +35,16 @@ class LogWriterWin32 : public ILogWriter {
   explicit LogWriterWin32(const std::string& file_path) {
     SbFileError out_error = kSbFileOk;
     bool created_ok = false;
-    file_.reset(
-        new ScopedFile(file_path.c_str(),
-                       kSbFileCreateAlways | kSbFileWrite,
-                       &created_ok,
-                       &out_error));
+    file_.reset(new ScopedFile(file_path.c_str(),
+                               kSbFileCreateAlways | kSbFileWrite, &created_ok,
+                               &out_error));
     if (!created_ok || out_error != kSbFileOk) {
       SB_LOG(ERROR) << "Could not create watchdog file " << file_path;
       file_.reset();
     }
   }
 
-  ~LogWriterWin32() {
-    FlushToDisk();
-  }
+  ~LogWriterWin32() { FlushToDisk(); }
 
   void Write(const char* content, int size) override {
     starboard::ScopedLock lock(mutex_);
@@ -59,11 +55,9 @@ class LogWriterWin32 : public ILogWriter {
   }
 
  private:
-  bool IsValid_Locked() const {
-    return file_ && file_->IsValid();
-  }
+  bool IsValid_Locked() const { return file_ && file_->IsValid(); }
 
-  void FlushToDisk()  {
+  void FlushToDisk() {
     starboard::ScopedLock lock(mutex_);
     if (IsValid_Locked()) {
       file_->Flush();
@@ -71,13 +65,13 @@ class LogWriterWin32 : public ILogWriter {
   }
   std::string file_path_;
   starboard::Mutex mutex_;
-  scoped_ptr<ScopedFile> file_;
+  std::unique_ptr<ScopedFile> file_;
 };
 
 }  // namespace.
 
-scoped_ptr<ILogWriter> CreateLogWriterWin32(const char* path) {
-  scoped_ptr<ILogWriter> output(new LogWriterWin32(path));
+std::unique_ptr<ILogWriter> CreateLogWriterWin32(const char* path) {
+  std::unique_ptr<ILogWriter> output(new LogWriterWin32(path));
   return output.Pass();
 }
 

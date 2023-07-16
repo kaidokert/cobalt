@@ -36,7 +36,6 @@
 #define STARBOARD_SHARED_STARBOARD_PLAYER_FILTER_AUDIO_TIME_STRETCHER_H_
 
 #include "starboard/common/ref_counted.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/starboard/player/decoded_audio_internal.h"
 #include "starboard/shared/starboard/player/filter/decoded_audio_queue.h"

@@ -102,7 +102,7 @@ void AttachDrmDataToSample(ComPtr<IMFSample> sample,
 }  // namespace
 
 DecryptingDecoder::DecryptingDecoder(const std::string& type,
-                                     scoped_ptr<MediaTransform> decoder,
+                                     std::unique_ptr<MediaTransform> decoder,
                                      SbDrmSystem drm_system)
     : type_(type), decoder_(decoder.Pass()) {
   SB_DCHECK(decoder_.get());

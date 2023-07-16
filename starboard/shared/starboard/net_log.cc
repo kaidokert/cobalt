@@ -20,6 +20,7 @@
 #include <deque>
 #include <functional>
 #include <map>
+#include <memory>
 #include <string>
 
 #include "starboard/common/atomic.h"
@@ -66,9 +67,9 @@ using RunFunction = std::function<void(Semaphore*)>;
 
 class FunctionThread : public Thread {
  public:
-  static scoped_ptr<Thread> Create(const std::string& thread_name,
-                                   RunFunction run_function) {
-    scoped_ptr<Thread> out(new FunctionThread(thread_name, run_function));
+  static std::unique_ptr<Thread> Create(const std::string& thread_name,
+                                        RunFunction run_function) {
+    std::unique_ptr<Thread> out(new FunctionThread(thread_name, run_function));
     return out.Pass();
   }
 
@@ -103,8 +104,8 @@ std::string ToString(SbSocketError error) {
   return ss.str();
 }
 
-scoped_ptr<Socket> CreateListenSocket() {
-  scoped_ptr<Socket> socket(
+std::unique_ptr<Socket> CreateListenSocket() {
+  std::unique_ptr<Socket> socket(
       new Socket(NET_LOG_IP_VERSION, kSbSocketProtocolTcp));
   socket->SetReuseAddress(true);
   SbSocketAddress sock_addr;
@@ -254,7 +255,7 @@ class BufferedSocketWriter {
 // callback will be invoked.
 class SocketListener {
  public:
-  typedef std::function<void(scoped_ptr<Socket>)> Callback;
+  typedef std::function<void(std::unique_ptr<Socket>)> Callback;
 
   SocketListener(Socket* listen_socket, Callback cb)
       : listen_socket_(listen_socket), callback_(cb) {
@@ -268,7 +269,7 @@ class SocketListener {
  private:
   void Run(Semaphore* joined_sema) {
     while (!joined_sema->TakeWait(100 * kSbTimeMillisecond)) {
-      scoped_ptr<Socket> client_connection(listen_socket_->Accept());
+      std::unique_ptr<Socket> client_connection(listen_socket_->Accept());
 
       if (client_connection) {
         callback_(client_connection.Pass());
@@ -279,7 +280,7 @@ class SocketListener {
 
   Socket* listen_socket_;
   Callback callback_;
-  scoped_ptr<Thread> thread_;
+  std::unique_ptr<Thread> thread_;
 };
 
 class NetLogServer {
@@ -310,7 +311,7 @@ class NetLogServer {
     socket_listener_.reset(new SocketListener(listen_socket_.get(), cb));
   }
 
-  void OnClientConnect(scoped_ptr<Socket> client_socket) {
+  void OnClientConnect(std::unique_ptr<Socket> client_socket) {
     ScopedLock lock(socket_mutex_);
     client_socket_ = client_socket.Pass();
     client_socket_->SetSendBufferSize(NET_LOG_SOCKET_BUFFER_SIZE);
@@ -371,12 +372,12 @@ class NetLogServer {
     }
   }
 
-  scoped_ptr<Socket> listen_socket_;
-  scoped_ptr<Socket> client_socket_;
+  std::unique_ptr<Socket> listen_socket_;
+  std::unique_ptr<Socket> client_socket_;
   Mutex socket_mutex_;
 
-  scoped_ptr<SocketListener> socket_listener_;
-  scoped_ptr<Thread> writer_thread_;
+  std::unique_ptr<SocketListener> socket_listener_;
+  std::unique_ptr<Thread> writer_thread_;
   Semaphore writer_thread_sema_;
   atomic_bool is_joined_;
 

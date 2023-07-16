@@ -210,7 +210,7 @@ SbPlayer SbPlayerCreate(SbWindow window,
 
   UpdateActiveSessionPlatformPlaybackState(kPlaying);
 
-  starboard::scoped_ptr<PlayerWorker::Handler> handler(
+  std::unique_ptr<PlayerWorker::Handler> handler(
       new FilterBasedPlayerWorkerHandler(creation_param, provider));
 
   SbPlayer player = SbPlayerPrivate::CreateInstance(

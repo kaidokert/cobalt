@@ -71,7 +71,7 @@ class AbstractWin32AudioDecoderImpl : public AbstractWin32AudioDecoder {
         expected_buffer_size_(
             GetExpectedBufferSize(codec_,
                                   audio_stream_info.number_of_channels)) {
-    scoped_ptr<MediaTransform> audio_decoder =
+    std::unique_ptr<MediaTransform> audio_decoder =
         CreateAudioTransform(audio_stream_info);
     impl_.reset(
         new DecryptingDecoder("audio", audio_decoder.Pass(), drm_system));
@@ -229,7 +229,7 @@ class AbstractWin32AudioDecoderImpl : public AbstractWin32AudioDecoder {
   const SbMediaAudioFrameStorageType audio_frame_fmt_;
 
   starboard::player::filter::AudioFrameDiscarder audio_frame_discarder_;
-  scoped_ptr<DecryptingDecoder> impl_;
+  std::unique_ptr<DecryptingDecoder> impl_;
   std::queue<DecodedAudioPtr> output_queue_;
   uint16_t number_of_channels_;
   atomic_bool heaac_detected_;
@@ -239,12 +239,12 @@ class AbstractWin32AudioDecoderImpl : public AbstractWin32AudioDecoder {
 
 }  // anonymous namespace.
 
-scoped_ptr<AbstractWin32AudioDecoder> AbstractWin32AudioDecoder::Create(
+std::unique_ptr<AbstractWin32AudioDecoder> AbstractWin32AudioDecoder::Create(
     SbMediaAudioFrameStorageType audio_frame_fmt,
     SbMediaAudioSampleType sample_type,
     const AudioStreamInfo& audio_stream_info,
     SbDrmSystem drm_system) {
-  return scoped_ptr<AbstractWin32AudioDecoder>(
+  return std::unique_ptr<AbstractWin32AudioDecoder>(
       new AbstractWin32AudioDecoderImpl(audio_frame_fmt, sample_type,
                                         audio_stream_info, drm_system));
 }

@@ -14,10 +14,10 @@
 
 #include "starboard/shared/uwp/watchdog_log.h"
 
+#include <memory>
 #include <string>
 
 #include "starboard/common/log.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/common/semaphore.h"
 #include "starboard/common/string.h"
 #include "starboard/common/thread.h"
@@ -39,19 +39,16 @@ class WatchDogThread : public Thread {
     Start();
   }
 
-  ~WatchDogThread() {
-    Join();
-  }
+  ~WatchDogThread() { Join(); }
 
   void Run() override {
     static const SbTime kSleepTime = kSbTimeMillisecond * 250;
     int counter = 0;
     bool created_ok = false;
     SbFileError out_error = kSbFileOk;
-    SbFile file_handle = SbFileOpen(file_path_.c_str(),
-                                    kSbFileCreateAlways | kSbFileWrite,
-                                    &created_ok,
-                                    &out_error);
+    SbFile file_handle =
+        SbFileOpen(file_path_.c_str(), kSbFileCreateAlways | kSbFileWrite,
+                   &created_ok, &out_error);
     if (!created_ok) {
       SB_LOG(ERROR) << "Could not create watchdog file " << file_path_;
       return;
@@ -74,7 +71,7 @@ class WatchDogThread : public Thread {
  private:
   std::string file_path_;
 };
-starboard::scoped_ptr<WatchDogThread> s_watchdog_singleton_;
+std::unique_ptr<WatchDogThread> s_watchdog_singleton_;
 }  // namespace.
 
 void StartWatchdogLog(const std::string& path) {
