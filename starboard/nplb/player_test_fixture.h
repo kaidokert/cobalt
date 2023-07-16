@@ -22,7 +22,6 @@
 #include <vector>
 
 #include "starboard/common/queue.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/drm.h"
 #include "starboard/nplb/player_test_util.h"
 #include "starboard/player.h"

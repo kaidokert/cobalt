@@ -26,7 +26,6 @@
 #include "starboard/common/media.h"
 #include "starboard/common/mutex.h"
 #include "starboard/common/ref_counted.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/configuration_constants.h"
 #include "starboard/media.h"
 #include "starboard/memory.h"

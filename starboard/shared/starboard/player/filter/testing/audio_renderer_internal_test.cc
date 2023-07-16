@@ -18,7 +18,6 @@
 #include <set>
 
 #include "starboard/common/log.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/media.h"
 #include "starboard/memory.h"
 #include "starboard/shared/starboard/media/media_util.h"
@@ -115,8 +114,8 @@ class AudioRendererTest : public ::testing::Test {
     const int kMaxCachedFrames = 256 * 1024;
     const int kMaxFramesPerAppend = 16384;
     audio_renderer_.reset(new AudioRendererPcm(
-        make_scoped_ptr<AudioDecoder>(audio_decoder_),
-        make_scoped_ptr<AudioRendererSink>(audio_renderer_sink_),
+        std::make_unique<AudioDecoder>(audio_decoder_),
+        std::make_unique<AudioRendererSink>(audio_renderer_sink_),
         GetDefaultAudioStreamInfo(), kMaxCachedFrames, kMaxFramesPerAppend));
     audio_renderer_->Initialize(
         std::bind(&AudioRendererTest::OnError, this),

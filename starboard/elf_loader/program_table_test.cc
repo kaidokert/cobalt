@@ -17,7 +17,6 @@
 #include <string>
 #include <vector>
 
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/elf_loader/file.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"

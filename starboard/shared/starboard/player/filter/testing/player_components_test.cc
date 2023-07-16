@@ -19,7 +19,6 @@
 #include <string>
 #include <vector>
 
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/common/string.h"
 #include "starboard/media.h"
 #include "starboard/player.h"

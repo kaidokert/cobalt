@@ -25,7 +25,6 @@
 
 #include "starboard/common/condition_variable.h"
 #include "starboard/common/mutex.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/common/string.h"
 #include "starboard/configuration_constants.h"
 #include "starboard/drm.h"

@@ -22,7 +22,6 @@
 #include <string>
 
 #include "starboard/common/mutex.h"
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/configuration_constants.h"
 #include "starboard/shared/starboard/media/media_support_internal.h"
 #include "starboard/shared/starboard/player/filter/audio_decoder_internal.h"

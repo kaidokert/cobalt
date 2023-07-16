@@ -14,7 +14,6 @@
 
 #include "starboard/elf_loader/relocations.h"
 
-#include "starboard/common/scoped_ptr.h"
 #include "starboard/elf_loader/elf.h"
 #include "starboard/elf_loader/file_impl.h"
 #include "starboard/string.h"
