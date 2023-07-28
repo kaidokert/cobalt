@@ -149,5 +149,5 @@ function setupFinished() {
   // on the JavaScript side.
   let span_ele = document.createElement('span');
   span_ele.id = SETUP_DONE_MESSAGE;
-  document.appendChild(span_ele);
+  document.body.appendChild(span_ele);
 }
