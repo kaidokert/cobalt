@@ -1,0 +1,11 @@
+Source: starboard
+Maintainer: Kaido Kert <kaidokert@google.com>
+Section: misc
+Priority: optional
+Standards-version: 4.6.2
+Build-Depends: debhelper-compat (= 13)
+
+Package: starboard
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Starboard porting library
