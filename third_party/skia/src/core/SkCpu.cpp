@@ -10,14 +10,6 @@
 #include "include/private/SkOnce.h"
 #include "src/core/SkCpu.h"
 
-#if defined(STARBOARD)
-#include "starboard/cpu_features.h"
-#endif
-
-#if !defined(__has_include)
-    #define __has_include(x) 0
-#endif
-
 #if defined(SK_CPU_X86)
     #if defined(_MSC_VER)
         #include <intrin.h>

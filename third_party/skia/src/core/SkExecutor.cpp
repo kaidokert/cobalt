@@ -122,18 +122,17 @@ private:
         return true;
     }
 
-    static void* Loop(void* ctx) {
+    static void Loop(void* ctx) {
         auto pool = (SkThreadPool*)ctx;
         do {
             pool->fWorkAvailable.wait();
         } while (pool->do_work());
-        return NULL;
     }
 
     // Both SkMutex and SkSpinlock can work here.
     using Lock = SkMutex;
 
-    SkTArray<SkThread>    fThreads;
+    SkTArray<std::thread> fThreads;
     WorkList              fWork;
     Lock                  fWorkLock;
     SkSemaphore           fWorkAvailable;

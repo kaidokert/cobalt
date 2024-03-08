@@ -11,13 +11,7 @@
 #ifndef SkOSFile_DEFINED
 #define SkOSFile_DEFINED
 
-#if defined(STARBOARD)
-#include "starboard/file.h"
-#define SkFile SbFilePrivate
-#else
 #include <stdio.h>
-#define SkFile FILE
-#endif
 
 #include "include/core/SkString.h"
 #include "include/private/SkTemplates.h"
