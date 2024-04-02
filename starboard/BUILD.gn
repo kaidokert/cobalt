@@ -29,10 +29,15 @@ group("gn_all") {
     "//starboard/examples/hello_world:starboard_hello_world_example",
     "//starboard/examples/window:starboard_window_example",
     "//starboard/extension:extension_test",
-    "//starboard/loader_app:app_key_files_test",
     "//starboard/nplb",
-    "//starboard/nplb/nplb_evergreen_compat_tests",
   ]
+  if (!sb_is_modular && sb_is_evergreen_compatible &&
+      current_toolchain == starboard_toolchain) {
+    deps += [
+      "//starboard/loader_app:app_key_files_test",
+      "//starboard/nplb/nplb_evergreen_compat_tests",
+    ]
+  }
 
   if (has_platform_targets) {
     deps += [ "//$starboard_path/platform_targets" ]
@@ -64,7 +69,7 @@ group("gn_all") {
     deps += [ "//starboard/contrib/cast/cast_starboard_api/samples:cast" ]
   }
 
-  if (!sb_is_evergreen) {
+  if (!sb_is_evergreen && !sb_is_modular) {
     deps += [ "//third_party/lz4_lib:lz4" ]
 
     if (sb_is_evergreen_compatible) {
