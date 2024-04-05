@@ -31,8 +31,7 @@ group("gn_all") {
     "//starboard/extension:extension_test",
     "//starboard/nplb",
   ]
-  if (!sb_is_modular && sb_is_evergreen_compatible &&
-      current_toolchain == starboard_toolchain) {
+  if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
     deps += [
       "//starboard/loader_app:app_key_files_test",
       "//starboard/nplb/nplb_evergreen_compat_tests",
