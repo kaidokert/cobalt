@@ -334,8 +334,7 @@ static_library("reset_evergreen_update") {
   deps = [ "//starboard:starboard_group" ]
 }
 
-if (!sb_is_modular && sb_is_evergreen_compatible &&
-    current_toolchain == starboard_toolchain) {
+if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
   target(gtest_target_type, "reset_evergreen_update_test") {
     testonly = true
     sources = [
