@@ -15,10 +15,24 @@
 
 from starboard.linux.shared import gyp_configuration as shared_configuration
 
+evergreen_compatible_tests = [
+    # TODO(b/292138589): Fails on various linux configs.
+    # 'nplb_evergreen_compat_tests',
+    'app_key_test',
+    'app_key_files_test',
+    'drain_file_test',
+    'elf_loader_test'
+    'installation_manager_test',
+    'reset_evergreen_update_test',
+    'slot_management_test',
+]
+
 
 class LinuxX64X11Configuration(shared_configuration.LinuxConfiguration):
   """Starboard Linux X64 X11 platform configuration."""
-  pass
+
+  def GetTestTargets(self):
+    return evergreen_compatible_tests + super().GetTestTargets()
 
 
 def CreatePlatformConfig():
