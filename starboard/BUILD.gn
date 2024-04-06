@@ -32,10 +32,7 @@ group("gn_all") {
     "//starboard/nplb",
   ]
   if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
-    deps += [
-      "//starboard/loader_app:app_key_files_test",
-      "//starboard/nplb/nplb_evergreen_compat_tests",
-    ]
+    deps += [ "//starboard/nplb/nplb_evergreen_compat_tests" ]
   }
 
   if (has_platform_targets) {
@@ -68,12 +65,17 @@ group("gn_all") {
     deps += [ "//starboard/contrib/cast/cast_starboard_api/samples:cast" ]
   }
 
-  if (!sb_is_evergreen && !sb_is_modular) {
+  if (!sb_is_evergreen) {
     deps += [ "//third_party/lz4_lib:lz4" ]
 
     if (sb_is_evergreen_compatible) {
       deps += [
         "//starboard/elf_loader:elf_loader_test_install($starboard_toolchain)",
+        "//starboard/loader_app:app_key_files_test_install($starboard_toolchain)",
+        "//starboard/loader_app:app_key_test_install($starboard_toolchain)",
+        "//starboard/loader_app:drain_file_test_install($starboard_toolchain)",
+        "//starboard/loader_app:installation_manager_test_install($starboard_toolchain)",
+        "//starboard/loader_app:reset_evergreen_update_test_install($starboard_toolchain)",
         "//starboard/loader_app:slot_management_test_install($starboard_toolchain)",
       ]
 

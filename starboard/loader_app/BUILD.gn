@@ -148,17 +148,20 @@ static_library("app_key_files") {
   deps = [ "//starboard:starboard_group" ]
 }
 
-target(gtest_target_type, "app_key_files_test") {
-  testonly = true
-  sources = [
-    "//starboard/common/test_main.cc",
-    "app_key_files_test.cc",
-  ]
-  deps = [
-    ":app_key_files",
-    "//testing/gmock",
-    "//testing/gtest",
-  ]
+if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
+  target(starboard_level_gtest_target_type, "app_key_files_test") {
+    testonly = true
+    sources = [
+      "//starboard/common/test_main.cc",
+      "app_key_files_test.cc",
+    ]
+    deps = [
+      ":app_key_files",
+      "//starboard:starboard_with_main",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+  }
 }
 
 static_library("app_key") {
@@ -174,17 +177,20 @@ static_library("app_key") {
   ]
 }
 
-target(gtest_target_type, "app_key_test") {
-  testonly = true
-  sources = [
-    "//starboard/common/test_main.cc",
-    "app_key_test.cc",
-  ]
-  deps = [
-    ":app_key",
-    "//testing/gmock",
-    "//testing/gtest",
-  ]
+if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
+  target(starboard_level_gtest_target_type, "app_key_test") {
+    testonly = true
+    sources = [
+      "//starboard/common/test_main.cc",
+      "app_key_test.cc",
+    ]
+    deps = [
+      ":app_key",
+      "//starboard:starboard_with_main",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+  }
 }
 
 static_library("drain_file") {
@@ -208,18 +214,21 @@ static_library("drain_file_helper") {
   ]
 }
 
-target(gtest_target_type, "drain_file_test") {
-  testonly = true
-  sources = [
-    "//starboard/common/test_main.cc",
-    "drain_file_test.cc",
-  ]
-  deps = [
-    ":drain_file",
-    ":drain_file_helper",
-    "//testing/gmock",
-    "//testing/gtest",
-  ]
+if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
+  target(starboard_level_gtest_target_type, "drain_file_test") {
+    testonly = true
+    sources = [
+      "//starboard/common/test_main.cc",
+      "drain_file_test.cc",
+    ]
+    deps = [
+      ":drain_file",
+      ":drain_file_helper",
+      "//starboard:starboard_with_main",
+      "//testing/gmock",
+      "//testing/gtest",
+    ]
+  }
 }
 
 proto_library("installation_store_proto") {
@@ -246,7 +255,7 @@ static_library("installation_manager") {
 }
 
 if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
-  target(gtest_target_type, "installation_manager_test") {
+  target(starboard_level_gtest_target_type, "installation_manager_test") {
     testonly = true
     sources = [
       "//starboard/common/test_main.cc",
@@ -257,13 +266,12 @@ if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
       ":installation_manager",
       ":installation_store_proto",
       ":pending_restart",
+      "//starboard:starboard_with_main",
       "//testing/gmock",
       "//testing/gtest",
     ]
   }
-}
 
-if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
   static_library("slot_management") {
     sources = [
       "slot_management.cc",
@@ -280,9 +288,7 @@ if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
       "//third_party/crashpad/wrapper",
     ]
   }
-}
 
-if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
   target(starboard_level_gtest_target_type, "slot_management_test") {
     testonly = true
     build_loader = false
@@ -314,28 +320,28 @@ static_library("pending_restart") {
   public_deps = [ "//starboard:starboard_headers_only" ]
 }
 
-static_library("memory_tracker_thread") {
-  sources = [
-    "memory_tracker_thread.cc",
-    "memory_tracker_thread.h",
-  ]
-
-  deps = [
-    "//starboard:starboard_headers_only",
-    "//starboard/common",
-  ]
-}
-
-static_library("reset_evergreen_update") {
-  sources = [
-    "reset_evergreen_update.cc",
-    "reset_evergreen_update.h",
-  ]
-  deps = [ "//starboard:starboard_group" ]
-}
-
 if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
-  target(gtest_target_type, "reset_evergreen_update_test") {
+  static_library("memory_tracker_thread") {
+    sources = [
+      "memory_tracker_thread.cc",
+      "memory_tracker_thread.h",
+    ]
+
+    deps = [
+      "//starboard:starboard_headers_only",
+      "//starboard/common",
+    ]
+  }
+
+  static_library("reset_evergreen_update") {
+    sources = [
+      "reset_evergreen_update.cc",
+      "reset_evergreen_update.h",
+    ]
+    deps = [ "//starboard:starboard_group" ]
+  }
+
+  target(starboard_level_gtest_target_type, "reset_evergreen_update_test") {
     testonly = true
     sources = [
       "//starboard/common/test_main.cc",
@@ -343,6 +349,7 @@ if (sb_is_evergreen_compatible && current_toolchain == starboard_toolchain) {
     ]
     deps = [
       ":reset_evergreen_update",
+      "//starboard:starboard_with_main",
       "//testing/gmock",
       "//testing/gtest",
     ]

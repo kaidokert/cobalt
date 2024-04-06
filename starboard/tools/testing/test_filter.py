@@ -30,7 +30,7 @@ EVERGREEN_COMPATIBLE_TESTS = [
     'app_key_test',
     'app_key_files_test',
     'drain_file_test',
-    'elf_loader_test'
+    'elf_loader_test',
     'installation_manager_test',
     'reset_evergreen_update_test',
     'slot_management_test',
