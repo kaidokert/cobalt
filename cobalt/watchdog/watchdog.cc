@@ -583,9 +583,9 @@ bool Watchdog::Unregister(const std::string& name, bool lock) {
   }
 
   if (result) {
-    DLOG(INFO) << "[Watchdog] Unregistered: " << name;
+    //DLOG(INFO) << "[Watchdog] Unregistered: " << name;
   } else {
-    DLOG(ERROR) << "[Watchdog] Unable to Unregister: " << name;
+    //DLOG(ERROR) << "[Watchdog] Unable to Unregister: " << name;
   }
   return result;
 }

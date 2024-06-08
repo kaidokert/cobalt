@@ -29,14 +29,14 @@ namespace dom {
 namespace {
 
 void LocalStorageInit(const storage::MemoryStore& memory_store) {
-  LOG(INFO) << "local_storage Init";
+  //LOG(INFO) << "local_storage Init";
 }
 
 void LocalStorageReadValues(
     const loader::Origin& origin,
     const LocalStorageDatabase::ReadCompletionCallback& callback,
     const storage::MemoryStore& memory_store) {
-  LOG(INFO) << "LocalStorageReadValues";
+  //LOG(INFO) << "LocalStorageReadValues";
 
   std::unique_ptr<storage::MemoryStore::LocalStorageMap> values(
       new storage::MemoryStore::LocalStorageMap);
