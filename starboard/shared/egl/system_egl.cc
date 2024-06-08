@@ -84,7 +84,7 @@ const SbEglInterface g_sb_egl_interface = {
     &eglGetCurrentSurface,
     &SbEglGetDisplay,
     &eglGetError,
-    &eglGetProcAddress,
+    &log_eglGetProcAddress,
     &eglInitialize,
     &eglMakeCurrent,
     &eglQueryContext,

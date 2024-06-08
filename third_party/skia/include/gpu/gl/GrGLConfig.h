@@ -52,6 +52,8 @@
  *
  */
 
+#define GR_GL_LOG_CALLS 1
+
 #if !defined(GR_GL_LOG_CALLS)
     #ifdef SK_DEBUG
         #define GR_GL_LOG_CALLS 1

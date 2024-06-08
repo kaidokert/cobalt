@@ -1559,6 +1559,7 @@ bool GrGLGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendTe
 
     this->bindTextureToScratchUnit(info.fTarget, info.fID);
 
+#if 0
     // If we have mips make sure the base level is set to 0 and the max level set to numMipLevels-1
     // so that the uploads go to the right levels.
     if (backendTexture.hasMipMaps() && this->glCaps().mipmapLevelControlSupport()) {
@@ -1576,6 +1577,7 @@ bool GrGLGpu::onUpdateCompressedBackendTexture(const GrBackendTexture& backendTe
         }
         params->set(nullptr, nonsamplerState, fResetTimestampForTextureParameters);
     }
+#endif
 
     bool result = this->uploadCompressedTexData(compression,
                                                 glFormat,
@@ -2327,10 +2329,10 @@ void GrGLGpu::flushRenderTargetNoColorWrites(GrGLRenderTarget* target, bool useM
 
 void GrGLGpu::flushFramebufferSRGB(bool enable) {
     if (enable && kYes_TriState != fHWSRGBFramebuffer) {
-        GL_CALL(Enable(GR_GL_FRAMEBUFFER_SRGB));
+        //GL_CALL(Enable(GR_GL_FRAMEBUFFER_SRGB));
         fHWSRGBFramebuffer = kYes_TriState;
     } else if (!enable && kNo_TriState != fHWSRGBFramebuffer) {
-        GL_CALL(Disable(GR_GL_FRAMEBUFFER_SRGB));
+        //GL_CALL(Disable(GR_GL_FRAMEBUFFER_SRGB));
         fHWSRGBFramebuffer = kNo_TriState;
     }
 }
@@ -2772,6 +2774,7 @@ void GrGLGpu::bindTexture(int unitIdx, GrSamplerState samplerState, const skgpu:
             }
         }
     }
+#if 0
     // These are not supported in ES2 contexts
     if (this->glCaps().mipmapLevelControlSupport() &&
         (texture->textureType() != GrTextureType::kExternal ||
@@ -2787,6 +2790,7 @@ void GrGLGpu::bindTexture(int unitIdx, GrSamplerState samplerState, const skgpu:
                                   newNonsamplerState.fMaxMipmapLevel));
         }
     }
+#endif
     texture->parameters()->set(samplerStateToRecord, newNonsamplerState,
                                fResetTimestampForTextureParameters);
 }
@@ -3695,6 +3699,7 @@ bool GrGLGpu::onClearBackendTexture(const GrBackendTexture& backendTexture,
 
     this->bindTextureToScratchUnit(info.fTarget, info.fID);
 
+#if 0
     // If we have mips make sure the base level is set to 0 and the max level set to numMipLevels-1
     // so that the uploads go to the right levels.
     if (numMipLevels && this->glCaps().mipmapLevelControlSupport()) {
@@ -3710,6 +3715,7 @@ bool GrGLGpu::onClearBackendTexture(const GrBackendTexture& backendTexture,
         }
         params->set(nullptr, nonsamplerState, fResetTimestampForTextureParameters);
     }
+#endif
 
     uint32_t levelMask = (1 << numMipLevels) - 1;
     bool result = this->uploadColorToTex(glFormat,

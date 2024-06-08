@@ -20,6 +20,9 @@
 
 extern "C" {
 #define GR_GL_TEXTURE_MAX_LEVEL 0x813D
+#define GR_GL_FRAMEBUFFER_SRGB  0x8DB9
+#define GR_GL_MULTISAMPLE       0x809D
+
 #define STR_(a) \
   case a:       \
     return #a
@@ -45,6 +48,29 @@ const char* _value2str(GLint param) {
     STR_(GL_CLAMP_TO_EDGE);
     STR_(GL_NEAREST);
     STR_(GL_REPEAT);
+  }
+  return "UNLISTED";
+}
+const char *_mode2str(GLenum mode) {
+  switch(mode) {
+    STR_(GL_TRIANGLES);
+    STR_(GL_TRIANGLE_STRIP);
+    STR_(GL_TRIANGLE_FAN);
+  }
+  return "UNLISTED";
+}
+const char *_cap2str(GLenum cap) {
+  switch(cap) {
+    STR_(GL_BLEND);
+    STR_(GL_CULL_FACE);
+    STR_(GL_DITHER);
+    STR_(GL_STENCIL_TEST);
+    STR_(GL_DEPTH_TEST);
+    STR_(GL_SCISSOR_TEST);
+    STR_(GL_SAMPLE_ALPHA_TO_COVERAGE);
+    STR_(GL_SAMPLE_COVERAGE);
+    STR_(GR_GL_FRAMEBUFFER_SRGB);
+    STR_(GR_GL_MULTISAMPLE);
   }
   return "UNLISTED";
 }
@@ -76,8 +102,35 @@ void log_glTexParameteriv(GLenum target, GLenum pname, const GLint* params) {
 }
 const GLubyte* log_glGetString(GLenum name) {
   auto ret = glGetString(name);
-  SB_LOG(ERROR) << "log_glGetString [" << name << "]";
+  SB_LOG(ERROR) << "glGetString [" << name << "]";
   return ret;
+}
+void log_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void *indices) {
+  SB_LOG(ERROR) << "glDrawElements [" << mode << "] " << _mode2str(mode) << 
+    " #" << count << " type:" << type;
+  glDrawElements(mode, count, type, indices);
+}
+void log_glDrawArrays(GLenum mode, GLint first, GLsizei count) {
+  SB_LOG(ERROR) << "glDrawArrays [" << mode << "] " << _mode2str(mode) << 
+    " first:" << first << " #" <<count;
+  glDrawArrays(mode, first, count);
+}
+void log_glEnable(GLenum cap) {
+  SB_LOG(ERROR) << "glEnable [" << cap << "] " << _cap2str(cap);
+  glEnable(cap);
+}
+void log_glDisable(GLenum cap) {
+  SB_LOG(ERROR) << "glDisable [" << cap << "] " << _cap2str(cap);
+  glDisable(cap);
+}
+void log_glBindTexture(GLenum target, GLuint texture) {
+  SB_LOG(ERROR) << "glBindTexture [" << target << "] " << _target2str(target)
+    << " #" << texture;
+  glBindTexture(target, texture);
+}
+void log_glUseProgram(GLuint program) {
+  SB_LOG(ERROR) << "glUseProgram #" << program;
+  glUseProgram(program);
 }
 }
 
@@ -90,7 +143,7 @@ const SbGlesInterface g_sb_gles_interface = {
     &glBindBuffer,
     &glBindFramebuffer,
     &glBindRenderbuffer,
-    &glBindTexture,
+    &log_glBindTexture,
     &glBlendColor,
     &glBlendEquation,
     &glBlendEquationSeparate,
@@ -122,11 +175,11 @@ const SbGlesInterface g_sb_gles_interface = {
     &glDepthMask,
     &glDepthRangef,
     &glDetachShader,
-    &glDisable,
+    &log_glDisable,
     &glDisableVertexAttribArray,
-    &glDrawArrays,
-    &glDrawElements,
-    &glEnable,
+    &log_glDrawArrays,
+    &log_glDrawElements,
+    &log_glEnable,
     &glEnableVertexAttribArray,
     &glFinish,
     &glFlush,
@@ -214,7 +267,7 @@ const SbGlesInterface g_sb_gles_interface = {
     &glUniformMatrix2fv,
     &glUniformMatrix3fv,
     &glUniformMatrix4fv,
-    &glUseProgram,
+    &log_glUseProgram,
     &glValidateProgram,
     &glVertexAttrib1f,
     &glVertexAttrib1fv,
