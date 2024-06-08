@@ -87,7 +87,7 @@ std::unique_ptr<Log::MessageBuilder> Log::NewMessageBuilder() {
 FILE* Log::Close() {
   FILE* result = nullptr;
 #if V8_OS_STARBOARD
-  SB_NOTIMPLEMENTED();
+  //SB_NOTIMPLEMENTED();
 #else
   if (output_handle_ != nullptr) {
     fflush(output_handle_);
