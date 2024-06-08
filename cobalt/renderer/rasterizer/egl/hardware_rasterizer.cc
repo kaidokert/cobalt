@@ -70,6 +70,7 @@ class HardwareRasterizer::Impl {
   int64_t GetFallbackRasterizeCount() { return fallback_rasterize_count_; }
 
   void ResetGraphicsStateCache() {
+    LOG(ERROR) << "ResetGraphicsStateCache resetContext";
     graphics_state_->SetDirty();
     GetFallbackContext()->resetContext();
   }
@@ -180,6 +181,7 @@ void HardwareRasterizer::Impl::Submit(
 
   // Reset the fallback context in case it is used between frames (e.g.
   // to initialize images).
+  LOG(ERROR) << "HardwareRasterizer::Impl::Submit resetContext";
   GetFallbackContext()->resetContext();
 }
 
@@ -233,6 +235,7 @@ void HardwareRasterizer::Impl::ResetFallbackContextDuringFrame() {
       kMSAAEnable_GrGLBackendState | kStencil_GrGLBackendState |
       kPixelStore_GrGLBackendState | kFixedFunction_GrGLBackendState;
 
+  LOG(ERROR) << "HardwareRasterizer::Impl::ResetFallbackContextDuringFrame resetContext";
   GetFallbackContext()->resetContext(~untouched_states & kAll_GrBackendState);
 }
 
@@ -268,6 +271,7 @@ void HardwareRasterizer::Impl::RasterizeTree(
     TRACE_EVENT0("cobalt::renderer", "OffscreenRasterize");
 
     // Ensure the skia context is fully reset.
+    LOG(ERROR) << "HardwareRasterizer::Impl::SubmitToFallbackRasterizer resetContext";
     GetFallbackContext()->resetContext();
     draw_object_manager.ExecuteOffscreenRasterize(
         graphics_state_.get(), shader_program_manager_.get());

@@ -145,6 +145,7 @@ void DrawRectTexture::SetupFragmentShaderAndDraw(
     return;
   }
 
+  LOG(ERROR) << "DrawRectTexture:Resetting texture clamps";
   for (int i = 0; i < SB_ARRAY_SIZE_INT(textures_); ++i) {
     if (textures_[i] == NULL) {
       break;
@@ -154,18 +155,21 @@ void DrawRectTexture::SetupFragmentShaderAndDraw(
         fragment_shader.u_texture_texunit(i), textures_[i]->GetTarget(),
         textures_[i]->gl_handle(), GL_CLAMP_TO_EDGE);
   }
+  LOG(ERROR) << " ";
+  LOG(ERROR) << " ";
 }
 
 void DrawRectTexture::ExecuteRasterize(GraphicsState* graphics_state,
                                        ShaderProgramManager* program_manager) {
-  LOG(ERROR) << "DrawRectTexture::ExecuteRasterize";
   if (textures_[1] == NULL) {
+    LOG(ERROR) << "DrawRectTexture::ExecuteRasterize SINGLE TEXTURE";
     ShaderProgram<ShaderVertexTexcoord, ShaderFragmentTexcoord>* program;
     program_manager->GetProgram(&program);
     graphics_state->UseProgram(program->GetHandle());
     SetupVertexShader(graphics_state, program->GetVertexShader());
     SetupFragmentShaderAndDraw(graphics_state, program->GetFragmentShader());
   } else {
+    LOG(ERROR) << "DrawRectTexture::ExecuteRasterize MULTIPLANAR TEXTURE";
     ShaderProgram<ShaderVertexTexcoord, ShaderFragmentTexcoordYuv3>* program;
     program_manager->GetProgram(&program);
     graphics_state->UseProgram(program->GetHandle());

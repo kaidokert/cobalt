@@ -947,6 +947,7 @@ void RenderTreeNodeVisitor::Visit(render_tree::RectShadowNode* shadow_node) {
 }
 
 void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
+  LOG(ERROR) << "RenderTreeNodeVisitor::Visit";
   if (!IsVisible(text_node->GetBounds())) {
     return;
   }

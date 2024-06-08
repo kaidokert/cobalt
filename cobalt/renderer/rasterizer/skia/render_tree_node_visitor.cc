@@ -337,7 +337,7 @@ void RenderTreeNodeVisitor::RenderFilterViaOffscreenSurface(
 
   draw_state_.render_target->drawImageRect(
       image.get(), source_rect, dest_rect,
-      SkSamplingOptions(SkFilterMode::kLinear), &paint,
+      SkSamplingOptions(SkFilterMode::kLinear,SkMipmapMode::kLinear), &paint,
       SkCanvas::kStrict_SrcRectConstraint);
 
   // Finally restore our parent render target's original transform for the
@@ -1419,7 +1419,7 @@ void DrawSolidRoundedRectBorderSoftware(
   bitmap.setImmutable();
   sk_sp<SkImage> image = SkImage::MakeFromBitmap(bitmap);
   draw_state->render_target->drawImage(image, rect.x(), rect.y(),
-                                       SkSamplingOptions(SkFilterMode::kLinear),
+                                       SkSamplingOptions(SkFilterMode::kLinear,SkMipmapMode::kLinear),
                                        &render_target_paint);
 }
 
@@ -1719,6 +1719,7 @@ void RenderText(SkCanvas* render_target,
 #if ENABLE_RENDER_TREE_VISITOR_TRACING
   TRACE_EVENT0("cobalt::renderer", "RenderText()");
 #endif
+  LOG(ERROR) << "I am rendering text here";
   if (blur_sigma > 20.0f) {
     // TODO: We could easily switch to using a blur filter at this point.
     //       Ideally we would just use a blur filter to do all blurred text
@@ -1733,24 +1734,31 @@ void RenderText(SkCanvas* render_target,
     GlyphBuffer* skia_glyph_buffer =
         base::polymorphic_downcast<GlyphBuffer*>(glyph_buffer.get());
 
+    LOG(ERROR) << "Creating paint";
     SkPaint paint(Font::GetDefaultSkPaint());
+    LOG(ERROR) << "Setting argb";
     paint.setARGB(color.a() * 255, color.r() * 255, color.g() * 255,
                   color.b() * 255);
 
     if (blur_sigma > 0.0f) {
+      LOG(ERROR) << "Making blur";
       sk_sp<SkMaskFilter> mf(
           SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, blur_sigma));
+      LOG(ERROR) << "Set mask filter";
       paint.setMaskFilter(mf);
     }
 
+    LOG(ERROR) << "Made textblob";
     sk_sp<const SkTextBlob> text_blob(skia_glyph_buffer->GetTextBlob());
-    render_target->drawTextBlob(text_blob.get(), position.x(), position.y(),
-                                paint);
+    LOG(ERROR) << "YES drawTextBlob..";
+    render_target->drawTextBlob(text_blob.get(), position.x(), position.y(), paint);
   }
 }
 }  // namespace
 
 void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
+  LOG(ERROR) << "skia:: RenderTreeNodeVisitor::Visit";
+
 #if ENABLE_RENDER_TREE_VISITOR_TRACING && !FILTER_RENDER_TREE_VISITOR_TRACING
   TRACE_EVENT0("cobalt::renderer", "Visit(TextNode)");
 #endif
@@ -1764,6 +1772,8 @@ void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
   float blur_zero_sigma = 0.0f;
 
   if (text_node->data().shadows) {
+    LOG(ERROR) << "TEXT HAS SHADOWS";
+
     const std::vector<render_tree::Shadow>& shadows =
         *text_node->data().shadows;
 
@@ -1790,6 +1800,7 @@ void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
     }
   }
 
+  LOG(ERROR) << "NOT RENDERING TEXT";
   // Finally render the main text.
   RenderText(draw_state_.render_target, text_node->data().glyph_buffer,
              text_node->data().color,

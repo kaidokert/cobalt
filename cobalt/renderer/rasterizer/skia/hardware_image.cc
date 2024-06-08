@@ -179,6 +179,7 @@ class HardwareFrontendImage::HardwareBackendImage {
         new backend::FramebufferRenderTargetEGL(cobalt_context, size));
     CHECK(!render_target->CreationError());
 
+    LOG(ERROR) << "InitializeFromRenderTree resetContext";
     // The above call to FramebufferRenderTargetEGL() may have dirtied graphics
     // state, so tell Skia to reset its context.
     gr_context->resetContext(kRenderTarget_GrGLBackendState |
@@ -192,6 +193,7 @@ class HardwareFrontendImage::HardwareBackendImage {
 
     // Tell Skia that the graphics state is unknown because we issued custom
     // GL commands above.
+    LOG(ERROR) << "InitializeFromRenderTree 2 resetContext";
     gr_context->resetContext(kRenderTarget_GrGLBackendState |
                              kTextureBinding_GrGLBackendState);
   }

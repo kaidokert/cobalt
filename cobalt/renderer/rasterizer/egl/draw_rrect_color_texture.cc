@@ -233,6 +233,7 @@ void DrawRRectColorTexture::SetupFragmentShaderAndDraw(
     return;
   }
 
+  LOG(ERROR) << "DrawRRectColorTexture:Resetting texture clamps";
   for (int i = 0; i < SB_ARRAY_SIZE_INT(textures_); ++i) {
     if (textures_[i] == NULL) {
       break;
@@ -242,6 +243,8 @@ void DrawRRectColorTexture::SetupFragmentShaderAndDraw(
         fragment_shader.u_texture_texunit(i), textures_[i]->GetTarget(),
         textures_[i]->gl_handle(), GL_CLAMP_TO_EDGE);
   }
+  LOG(ERROR) << " ";
+  LOG(ERROR) << " ";
 }
 
 void DrawRRectColorTexture::ExecuteRasterize(

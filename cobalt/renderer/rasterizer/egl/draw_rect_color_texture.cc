@@ -199,6 +199,7 @@ void DrawRectColorTexture::SetupFragmentShaderAndDraw(
     return;
   }
 
+  LOG(ERROR) << "DrawRectColorTexture:Resetting texture clamps";
   for (int i = 0; i < SB_ARRAY_SIZE_INT(textures_); ++i) {
     if (textures_[i] == NULL) {
       break;
@@ -208,12 +209,14 @@ void DrawRectColorTexture::SetupFragmentShaderAndDraw(
         fragment_shader.u_texture_texunit(i), textures_[i]->GetTarget(),
         textures_[i]->gl_handle(), GL_CLAMP_TO_EDGE);
   }
+  LOG(ERROR) << " ";
+  LOG(ERROR) << " ";
 }
 
 void DrawRectColorTexture::ExecuteRasterize(
     GraphicsState* graphics_state, ShaderProgramManager* program_manager) {
-  LOG(ERROR) << "DrawRectColorTexture::ExecuteRasterize";
   if (textures_[1] == NULL) {
+    LOG(ERROR) << "DrawRectColorTexture::ExecuteRasterize SINGLE TEXTURE";
     ShaderProgram<ShaderVertexColorTexcoord, ShaderFragmentColorTexcoord>*
         program;
     program_manager->GetProgram(&program);
@@ -223,7 +226,7 @@ void DrawRectColorTexture::ExecuteRasterize(
     LOG(ERROR) << shader.GetSource();
     SetupFragmentShaderAndDraw(graphics_state, program->GetFragmentShader());
   } else {
-    LOG(ERROR) << "Have textures!";
+    LOG(ERROR) << "DrawRectColorTexture::ExecuteRasterize MULTI TEXTURE";
     ShaderProgram<ShaderVertexColorTexcoord, ShaderFragmentColorTexcoordYuv3>*
         program;
     program_manager->GetProgram(&program);

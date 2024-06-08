@@ -48,6 +48,9 @@ class SoftwareScratchSurface : public RenderTreeNodeVisitor::ScratchSurface {
 
 std::unique_ptr<RenderTreeNodeVisitor::ScratchSurface> CreateScratchSurface(
     const math::Size& size) {
+
+  DLOG(ERROR) << "SoftwareRasterizer::CreateScratchSurface";
+
   TRACE_EVENT2("cobalt::renderer", "CreateScratchSurface()", "width",
                size.width(), "height", size.height());
   sk_sp<SkSurface> sk_surface = CreateScratchSkSurface(size);

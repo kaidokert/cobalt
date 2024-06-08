@@ -34,6 +34,7 @@ void DrawCallback::ExecuteUpdateVertexBuffer(
 
 void DrawCallback::ExecuteRasterize(GraphicsState* graphics_state,
                                     ShaderProgramManager* program_manager) {
+  LOG(ERROR) << "DrawCallback::ExecuteRasterize";
   if (!rasterize_callback_.is_null()) {
     rasterize_callback_.Run();
   }

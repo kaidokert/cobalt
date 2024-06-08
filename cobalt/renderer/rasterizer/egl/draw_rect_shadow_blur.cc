@@ -44,6 +44,7 @@ const float kBlurDistance = kBlurExtentInSigmas / kSqrt2;
 void SetBlurRRectUniforms(const ShaderFragmentColorBlurRrects& shader,
                           math::RectF rect, render_tree::RoundedCorners corners,
                           float sigma) {
+  LOG(ERROR) << "SetBlurRRectUniforms";
   const float kBlurExtentInPixels = kBlurExtentInSigmas * sigma;
   const float kOffsetScale = kBlurDistance / kBlurExtentInPixels;
 

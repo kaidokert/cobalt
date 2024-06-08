@@ -458,6 +458,8 @@ FaceOrientation GetFaceOrientationFromModelViewProjectionMatrix(
 void HardwareRasterizer::Impl::RenderTextureEGL(
     const render_tree::ImageNode* image_node,
     RenderTreeNodeVisitorDrawState* draw_state) {
+  LOG(ERROR) << "HardwareRasterizer::Impl::RenderTextureEGL";
+
   Image* image =
       base::polymorphic_downcast<Image*>(image_node->data().source.get());
   if (!image) {
@@ -517,6 +519,7 @@ void HardwareRasterizer::Impl::RenderTextureEGL(
   uint32_t untouched_states =
       kMSAAEnable_GrGLBackendState | kStencil_GrGLBackendState |
       kPixelStore_GrGLBackendState | kFixedFunction_GrGLBackendState;
+  LOG(ERROR) << "HardwareRasterizer::Impl::RenderTextureEGL resetContext";
   gr_context_->resetContext(~untouched_states & kAll_GrBackendState);
 }
 
@@ -524,6 +527,9 @@ void HardwareRasterizer::Impl::RenderTextureWithMeshFilterEGL(
     const render_tree::ImageNode* image_node,
     const render_tree::MapToMeshFilter& mesh_filter,
     RenderTreeNodeVisitorDrawState* draw_state) {
+  
+  DLOG(ERROR) << "HardwareRasterizer::Impl::RenderTextureWithMeshFilterEGL";
+
   if (mesh_filter.mesh_type() == render_tree::kRectangular) {
     NOTREACHED() << "This rasterizer does not support rectangular meshes on "
                     "the map-to-mesh filter.";
@@ -585,12 +591,14 @@ void HardwareRasterizer::Impl::RenderTextureWithMeshFilterEGL(
   }
 
   // Let Skia know that we've modified GL state.
+  LOG(ERROR) << "HardwareRasterizer::Impl::RenderTextureWithMeshFilterEGL resetContext";
   gr_context_->resetContext();
 }
 
 scoped_refptr<render_tree::Image>
 HardwareRasterizer::Impl::ConvertRenderTreeToImage(
     const scoped_refptr<render_tree::Node>& root) {
+  LOG(ERROR) << "HardwareRasterizer::Impl::ConvertRenderTreeToImage";
   return resource_provider_->DrawOffscreenImage(root);
 }
 
@@ -678,6 +686,7 @@ void HardwareRasterizer::Impl::Submit(
 
   // First reset the graphics context state for the pending render tree
   // draw calls, in case we have modified state in between.
+  LOG(ERROR) << "HardwareRasterizer::Impl::Submit resetContext";
   gr_context_->resetContext();
 
   // Get a SkCanvas that outputs to our hardware render target.
@@ -726,6 +735,7 @@ void HardwareRasterizer::Impl::SubmitOffscreenToRenderTarget(
     return;
   }
 
+  LOG(ERROR) << "ExecuteRasterize: AM ABOUT TO MESS YOUR CONTEXT";
   backend::GraphicsContextEGL::ScopedMakeCurrent scoped_make_current(
       graphics_context_, render_target_egl.get());
 
@@ -779,6 +789,8 @@ std::unique_ptr<RenderTreeNodeVisitor::ScratchSurface>
 HardwareRasterizer::Impl::CreateScratchSurface(const math::Size& size) {
   TRACE_EVENT2("cobalt::renderer", "HardwareRasterizer::CreateScratchImage()",
                "width", size.width(), "height", size.height());
+
+  DLOG(ERROR) << "HardwareRasterizer::Impl::CreateScratchSurface";
 
   std::unique_ptr<CachedScratchSurfaceHolder> scratch_surface(
       new CachedScratchSurfaceHolder(&scratch_surface_cache_.value(), size));
@@ -857,12 +869,20 @@ void HardwareRasterizer::Impl::RasterizeRenderTreeToCanvas(
       base::Bind(&HardwareRasterizer::Impl::ConvertRenderTreeToImage,
                  base::Unretained(this)));
   DCHECK(render_tree);
+
+  DLOG(ERROR) << "NO EARLY OUT";
+  //return;
   render_tree->Accept(&visitor);
 
   current_surface_origin_ = old_origin;
 }
 
-void HardwareRasterizer::Impl::ResetSkiaState() { gr_context_->resetContext(); }
+void HardwareRasterizer::Impl::ResetSkiaState() { 
+  DLOG(ERROR) << "HardwareRasterizer::Impl::ResetSkiaState";
+
+  LOG(ERROR) << "HardwareRasterizer::Impl::ResetSkiaState";
+  gr_context_->resetContext(); 
+}
 
 HardwareRasterizer::HardwareRasterizer(
     backend::GraphicsContext* graphics_context, int skia_atlas_width,
