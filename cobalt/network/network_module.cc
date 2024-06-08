@@ -227,8 +227,8 @@ void NetworkModule::OnCreate(
   cookie_jar_.reset(new CookieJarImpl(url_request_context_->cookie_store(),
                                       task_runner().get()));
 #if defined(DIAL_SERVER)
-  dial_service_.reset(new DialService());
-  dial_service_proxy_ = new DialServiceProxy(dial_service_->AsWeakPtr());
+  //dial_service_.reset(new DialService());
+  //dial_service_proxy_ = new DialServiceProxy(dial_service_->AsWeakPtr());
 #endif
 
   net_poster_.reset(new NetPoster(this));
@@ -258,9 +258,9 @@ void NetworkModule::OnRestartDialService(base::WaitableEvent* creation_event) {
   // Destroy existing service first.
   dial_service_.reset();
   // Create new dial service
-  dial_service_ = std::make_unique<DialService>();
-  dial_service_proxy_->ReplaceDialService(dial_service_->AsWeakPtr());
-  creation_event->Signal();
+  //dial_service_ = std::make_unique<DialService>();
+  //dial_service_proxy_->ReplaceDialService(dial_service_->AsWeakPtr());
+  //creation_event->Signal();
 }
 #endif
 
