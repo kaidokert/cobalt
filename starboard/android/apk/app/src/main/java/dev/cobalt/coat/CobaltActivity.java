@@ -14,16 +14,23 @@
 
 package dev.cobalt.coat;
 
+import static dev.cobalt.util.Log.TAG;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.view.View;
 
+import android.webkit.WebSettings;
 import com.google.androidgamesdk.GameActivity;
 import android.media.AudioManager;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import android.webkit.WebView;
+
+import dev.cobalt.util.Log;
 
 /** Native activity. */
 public abstract class CobaltActivity extends GameActivity {
@@ -35,6 +42,8 @@ public abstract class CobaltActivity extends GameActivity {
   private static final String URL_ARG = "--url=";
 
   private long timeInNanoseconds;
+
+  private WebView webView;
 
   static {
     System.loadLibrary("coat");
@@ -51,6 +60,7 @@ public abstract class CobaltActivity extends GameActivity {
     return args.toArray(new String[0]);
   }
 
+  @SuppressLint("SetJavaScriptEnabled")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     // Record the application start timestamp.
@@ -66,9 +76,43 @@ public abstract class CobaltActivity extends GameActivity {
       ((StarboardBridge.HostApplication) getApplication()).setStarboardBridge(starboardBridge);
     } else {
       // Warm start - Pass the deep link to the running Starboard app.
+      Log.i(TAG, "TODO..");
     }
 
+    // *WebView setup
+
+    // Allow debugger
+    WebView.setWebContentsDebuggingEnabled(true);
+    // Create a WebView instance
+    webView = new WebView(this);
+
+    // Enable JavaScript (if needed)
+    WebSettings webSettings = webView.getSettings();
+    webSettings.setJavaScriptEnabled(true);
+
+    // Set a custom user-agent
+    String customUserAgent = "Mozilla/5.0 (Linux armeabi-v7a; Android 12) Cobalt/26.lts.99.42-gold (unlike Gecko) v8/8.8.278.8-jit gles Starboard/15, Google_ATV_sabrina_2020/STTE.231215.005 (google, Chromecast) com.google.android.youtube.tv/6.30.300";
+    webSettings.setUserAgentString(customUserAgent);
+
+    // Set mixed content mode to allow all content to be loaded, regardless of the security origin
+    webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+
+    // Set cache mode to allow the WebView to use the default cache behavior
+    webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+
+    // Enable DOM storage
+    webSettings.setDomStorageEnabled(true);
+
+    // Load Kabuki
+    webView.loadUrl("https://youtube.com/tv?debugjs=1");
+
+    // super.onCreate() will cause an APP_CMD_START in native code,
+    // so make sure to initialize any state beforehand that might be touched by
+    // native code invocations.
     super.onCreate(savedInstanceState);
+
+    // Set the WebView as the main content view of the activity
+    setContentView(webView);
   }
 
   @Override
@@ -91,4 +135,5 @@ public abstract class CobaltActivity extends GameActivity {
             | View.SYSTEM_UI_FLAG_FULLSCREEN
     );
   }
+
 }
