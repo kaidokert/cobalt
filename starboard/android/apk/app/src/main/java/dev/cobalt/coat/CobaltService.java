@@ -13,14 +13,14 @@
 // limitations under the License.
 
 package dev.cobalt.coat;
+
 import static dev.cobalt.util.Log.TAG;
 
 import dev.cobalt.util.Log;
 
-/**
- * Cobalt service.
- */
+/** Abstract class that provides an interface for Cobalt to interact with a platform service. */
 public abstract class CobaltService {
+  // Indicate is the service opened, and be able to send data to client
   protected boolean opened = true;
 
   /** Interface that returns an object that extends CobaltService. */
