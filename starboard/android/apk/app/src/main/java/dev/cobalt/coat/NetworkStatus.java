@@ -28,8 +28,8 @@ import dev.cobalt.util.Log;
 /** Class to help Cobalt monitor status change. */
 public class NetworkStatus {
 
-  private NetworkCallback networkCallback;
-  private ConnectivityManager connectivityManager;
+  private final NetworkCallback networkCallback;
+  private final ConnectivityManager connectivityManager;
   private final Handler mainHandler = new Handler(Looper.getMainLooper());
   private boolean callbackAdded = false;
 
@@ -52,7 +52,6 @@ public class NetworkStatus {
       this.networkStatus.sendStatusChange(true);
     }
   }
-  ;
 
   public void sendStatusChange(final boolean online) {
     this.mainHandler.post(

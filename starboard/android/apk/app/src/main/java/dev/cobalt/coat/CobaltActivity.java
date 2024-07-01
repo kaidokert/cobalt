@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
@@ -31,8 +32,8 @@ import com.google.androidgamesdk.GameActivity;
 import dev.cobalt.libraries.services.ClientLogInfoModule;
 import dev.cobalt.libraries.services.FakeSoftMicModule;
 import dev.cobalt.util.Log;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,6 +80,17 @@ public abstract class CobaltActivity extends GameActivity {
     }
   }
 
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      Log.d(TAG, "Special key was pressed: " + keyCode);
+      webView.evaluateJavascript("handleBackPress()", null);
+    } else {
+      Log.d(TAG, "Key was pressed: " + keyCode);
+    }
+    return super.onKeyDown(keyCode, event);
+  }
+
 
   @SuppressLint("SetJavaScriptEnabled")
   @Override
@@ -104,18 +116,16 @@ public abstract class CobaltActivity extends GameActivity {
       Log.i(TAG, "TODO..");
     }
 
-    CobaltService.Factory clientLogInfoFactory =
-        new ClientLogInfoModule().provideFactory(getApplicationContext());
+    CobaltService.Factory clientLogInfoFactory = new ClientLogInfoModule().provideFactory(
+        getApplicationContext());
     getStarboardBridge().registerCobaltService(clientLogInfoFactory);
-    CobaltService.Factory fakeSoftMicFactory =
-        new FakeSoftMicModule().provideFactory(getApplicationContext());
+    CobaltService.Factory fakeSoftMicFactory = new FakeSoftMicModule().provideFactory(
+        getApplicationContext());
     getStarboardBridge().registerCobaltService(fakeSoftMicFactory);
 
     // Make the activity full-screen
-    getWindow().setFlags(
-        WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        WindowManager.LayoutParams.FLAG_FULLSCREEN
-    );
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
     OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
     dispatcher.addCallback(this, new OnBackPressedCallback(true) {
@@ -212,13 +222,9 @@ public abstract class CobaltActivity extends GameActivity {
   private void hideSystemUi() {
     View decorView = getWindow().getDecorView();
     decorView.setSystemUiVisibility(
-        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_FULLSCREEN
-    );
+        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
   }
 
 }
