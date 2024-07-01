@@ -4,17 +4,28 @@ import static dev.cobalt.util.Log.TAG;
 
 import android.content.Context;
 import dev.cobalt.util.Log;
+import java.util.Arrays;
+import java.util.HashMap;
 
+/**
+ * Mock Starboard bridge
+ */
 public class StarboardBridge {
+  private static final String TAG = "CobaltService";
 
+  private final HashMap<String, CobaltService.Factory> cobaltServiceFactories = new HashMap<>();
+  private final HashMap<String, CobaltService> cobaltServices = new HashMap<>();
+  /**
+   * Host app interface
+   */
   public interface HostApplication {
     void setStarboardBridge(StarboardBridge starboardBridge);
 
     StarboardBridge getStarboardBridge();
   }
 
-  private VolumeStateReceiver volumeStateReceiver;
-  private CobaltSystemConfigChangeReceiver sysConfigChangeReceiver;
+  private final VolumeStateReceiver volumeStateReceiver;
+  private final CobaltSystemConfigChangeReceiver sysConfigChangeReceiver;
 
   private final Runnable stopRequester =
       new Runnable() {
@@ -32,4 +43,54 @@ public class StarboardBridge {
   public void requestStop(int errorLevel) {
     Log.i(TAG, "Request to stop");
   }
+
+
+  public void registerCobaltService(CobaltService.Factory factory) {
+    Log.i(TAG, "Registered " + factory.getServiceName());
+    cobaltServiceFactories.put(factory.getServiceName(), factory);
+  }
+
+  boolean hasCobaltService(String serviceName) {
+    boolean weHaveIt =cobaltServiceFactories.get(serviceName) != null;
+    Log.e(TAG, "From bridge, hasCobaltService:" + serviceName + " got? : " + weHaveIt);
+    return weHaveIt;
+  }
+
+  CobaltService openCobaltService(long nativeService, String serviceName) {
+    if (cobaltServices.get(serviceName) != null) {
+      // Attempting to re-open an already open service fails.
+      Log.e(TAG, String.format("Cannot open already open service %s", serviceName));
+      return null;
+    }
+    final CobaltService.Factory factory = cobaltServiceFactories.get(serviceName);
+    if (factory == null) {
+      Log.e(TAG, String.format("Cannot open unregistered service %s", serviceName));
+      return null;
+    }
+    CobaltService service = factory.createCobaltService(nativeService);
+    if (service != null) {
+      //service.receiveStarboardBridge(this);
+      cobaltServices.put(serviceName, service);
+    }
+    return service;
+  }
+
+  void closeCobaltService(String serviceName) {
+    Log.i(TAG, String.format("Close service: %s", serviceName));
+    cobaltServices.remove(serviceName);
+  }
+
+  // Differing impl
+  void sendToCobaltService(String serviceName, byte [] data) {
+    Log.i(TAG, String.format("Send to : %s data: %s", serviceName, Arrays.toString(data)));
+    CobaltService service = cobaltServices.get(serviceName);
+    if (service == null) {
+      // Attempting to re-open an already open service fails.
+      Log.e(TAG, String.format("Service not opened: %s", serviceName));
+      return;
+    }
+    service.receiveFromClient(data);
+  }
+
+
 }

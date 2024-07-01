@@ -17,14 +17,75 @@ import static dev.cobalt.util.Log.TAG;
 
 import dev.cobalt.util.Log;
 
+/**
+ * Cobalt service.
+ */
 public abstract class CobaltService {
+  protected boolean opened = true;
+
   /** Interface that returns an object that extends CobaltService. */
   public interface Factory {
     /** Create the service. */
-    public CobaltService createCobaltService(long nativeService);
+    CobaltService createCobaltService(long nativeService);
 
     /** Get the name of the service. */
-    public String getServiceName();
+    String getServiceName();
   }
+
+  // Lifecycle
+  /** Prepare service for start or resume. */
+  public abstract void beforeStartOrResume();
+
+  /** Prepare service for suspend. */
+  public abstract void beforeSuspend();
+
+  /** Prepare service for stop. */
+  public abstract void afterStopped();
+
+  // Service API
+  /** Response to client from calls to receiveFromClient(). */
+  public static class ResponseToClient {
+    /** Indicate if the service was unable to receive data because it is in an invalid state. */
+    public boolean invalidState;
+
+    /** The synchronous response data from the service. */
+    public byte[] data;
+  }
+
+  public abstract ResponseToClient receiveFromClient(byte[] data);
+
+  /**
+   * Close the service.
+   *
+   * <p>Once this function returns, it is invalid to call sendToClient for the nativeService, so
+   * synchronization must be used to protect against this.
+   */
+  @SuppressWarnings("unused")
+  public void onClose() {
+    synchronized (this) {
+      opened = false;
+      close();
+    }
+  }
+
+  /**
+   * Send data from the service to the client.
+   *
+   * <p>This may be called from a separate thread, do not call nativeSendToClient() once onClose()
+   * is processed.
+   */
+  protected void sendToClient(long nativeService, byte[] data) {
+    synchronized (this) {
+      if (!opened) {
+        Log.w(
+            TAG,
+            "Platform service did not send data to client, because client already closed the"
+                + " platform service.");
+      }
+
+    }
+  }
+
+  public abstract void close();
 
 }
