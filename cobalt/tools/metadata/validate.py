@@ -24,42 +24,76 @@ import re
 import os
 import sys
 import argparse
+try:
+  from cobalt.tools.metadata.gen import metadata_file_pb2
+except ImportError:
+  pass
 
 log = logging.getLogger(__name__)
 
+CHROMIUM_HOST = 'https://chromium.googlesource.com'
+CHROMIUM_SRC = CHROMIUM_HOST + '/chromium/src.git'
 
-def validate_content(textproto_content,
-                     metadata_file_path='',
-                     warn_deprecations=False):
-  # pylint: disable=import-outside-toplevel
-  from cobalt.tools.metadata.gen import metadata_file_pb2
-  metadata = metadata_file_pb2.Metadata()
-  text_format.Parse(textproto_content, metadata)
-  if not metadata.name:
-    raise RuntimeError(f'{metadata_file_path}: `name` field must be present')
-  if not metadata.HasField('third_party'):
-    raise RuntimeError(
-        f'{metadata_file_path}: `third_party` field must be present')
 
-  third_party = metadata.third_party
-  if not third_party.license_type:
-    log.warning('%s: third_party.licence_type is missing', metadata_file_path)
-  if warn_deprecations and len(third_party.url) > 0:
-    log.warning('"url" field is deprecated, please use "identifier" instead')
+class MetaData(object):
+  """Validates Metadadata fields"""
 
-  git_id = next((id for id in third_party.identifier if id.type == 'Git'), None)
-  if not git_id:
-    raise RuntimeError(
-        f'{metadata_file_path}: identifier \'Git\' must be present')
+  def __init__(self, textproto_content, metadata_file_path):
+    metadata = metadata_file_pb2.Metadata()
+    text_format.Parse(textproto_content, metadata)
+    if not metadata.name:
+      raise RuntimeError(f'{metadata_file_path}: `name` field must be present')
+    self.name = metadata.name
+    if not metadata.HasField('third_party'):
+      raise RuntimeError(
+          f'{metadata_file_path}: `third_party` field must be present')
 
-  if not git_id.version:
-    raise RuntimeError(
-        f'{metadata_file_path}: third_party.version field for identifier '
-        f'\'Git\' must be present')
-  if not git_id.value:
-    raise RuntimeError(
-        f'{metadata_file_path}: third_party.value field for identifier '
-        f'\'Git\' must be present')
+    self.third_party = metadata.third_party
+    if not self.third_party.license_type:
+      log.warning('%s: third_party.licence_type is missing', metadata_file_path)
+    if len(self.third_party.url) > 0:
+      log.warning('"url" field is deprecated, please use "identifier" instead')
+
+    def identifier(name):
+      return next((id for id in self.third_party.identifier if id.type == name),
+                  None)
+
+    self.git_id = identifier('Git')
+    if not self.git_id:
+      raise RuntimeError(
+          f'{metadata_file_path}: identifier \'Git\' must be present')
+    self.closest_version = self.git_id.closest_version
+
+    if not self.git_id.version:
+      raise RuntimeError(
+          f'{metadata_file_path}: third_party.version field for identifier '
+          f'\'Git\' must be present')
+    if not self.git_id.value:
+      raise RuntimeError(
+          f'{metadata_file_path}: third_party.value field for identifier '
+          f'\'Git\' must be present')
+    self.chromium_version = identifier('ChromiumVersion')
+    if self.chromium_version:
+      self.chromium_version = self.chromium_version.value
+    else:
+      self.chromium_version = ''
+    self.upstream_subdir = identifier('UpstreamSubdir')
+    if self.upstream_subdir:
+      self.upstream_subdir = self.upstream_subdir.value
+    else:
+      self.upstream_subdir = ''
+    self.is_chromium = self.git_id.value == CHROMIUM_SRC
+    self.from_chromium = self.git_id.value.startswith(CHROMIUM_HOST)
+    self.file = metadata_file_path
+    self.dir = os.path.dirname(self.file)
+    self.in_3p = 'third_party/' in self.file
+    self.closet_version = self.git_id.closest_version or ''
+    self.git_hash = self.git_id.version
+    self.git_repo = self.git_id.value
+
+
+def validate_content(textproto_content, metadata_file_path=''):
+  meta = MetaData(textproto_content, metadata_file_path)
   is_internal = os.path.exists('internal')
   if not is_internal:  # Copybara doesn't preserve squash commits
     subtree_dir = os.path.dirname(metadata_file_path).replace(os.sep, '/')
@@ -68,15 +102,29 @@ def validate_content(textproto_content,
     args = ['git', 'log', '-1', f'--grep={pattern}', f'--pretty={log_format}']
     p = subprocess.run(args, capture_output=True, text=True, check=True)
     split = p.stdout.strip()
-    if split and git_id.version != split:
-      raise RuntimeError(f'{git_id.version} does not match {split}')
+    if split and meta.git_id.version != split:
+      raise RuntimeError(f'{meta.git_id.version} does not match {split}')
 
 
-def validate_file(metadata_file_path, warn_deprecations=False):
+def validate_file(metadata_file_path):
   logging.info('Validating %s', metadata_file_path)
   with open(metadata_file_path, 'r', encoding='utf-8') as f:
     textproto_content = f.read()
-    validate_content(textproto_content, metadata_file_path, warn_deprecations)
+    validate_content(textproto_content, metadata_file_path)
+
+
+def list_file(metadata_file_path, format_tuple, apply_filters):
+
+  logging.info('Validating %s', metadata_file_path)
+  with open(metadata_file_path, 'r', encoding='utf-8') as f:
+    textproto_content = f.read()
+    meta = MetaData(textproto_content, metadata_file_path)
+    for filter_ in apply_filters:
+      if filter_(meta):
+        return
+    fmt_string = format_tuple[0]
+    values_tuple = format_tuple[2](meta)
+    print(fmt_string.format(*values_tuple))
 
 
 def update_proto():
@@ -116,19 +164,106 @@ def main():
       help='Update generated proto definition')
   parser.add_argument(
       '-v', '--verbose', action='store_true', help='Verbose output')
+
+  subparsers = parser.add_subparsers(dest='command', help='Subcommand to run')
+  list_parser = subparsers.add_parser(
+      'list',
+      help='List the packages',
+      formatter_class=argparse.RawTextHelpFormatter)
+  list_parser.add_argument(
+      '--filter',
+      type=str,
+      nargs='+',
+      choices=[
+          'subdir', 'subdir-', 'chromium', 'chromium-', 'chromium_copy',
+          'chromium_copy-', '3p', '3p-', 'target', 'target-'
+      ],
+      help='''Filter items based on criteria. Append - to exclude.
+        Multiple filters can be used.
+        Choices are:
+        subdir/subdir-: Include/exclude packages that are subdirectory imports.
+        chromium/chromium-: Include/exclude packages from Chromium root repo.
+        chromium_copy/chromium_copy-: Include/exclude packages that are hosted
+          on Chromium Gerrit.
+        3p/3p-: Include/exclude packages under third_party dirs.
+        target/target-: Include/exclude packages that are at the target
+          Chromium version''')
+  list_parser.add_argument(
+      '--format',
+      choices=['all', 'dir', 'versions'],
+      default='all',
+      help='''Columns to output
+        all: Shows all.
+        dir: Only columns relevant to directory structure.
+        versions: Only columns having version info.''')
+
   args = parser.parse_args()
   if args.verbose:
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
   if args.update_proto:
     update_proto()
+
+  do_list = args.command == 'list'
+  if do_list:
+    version_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'VERSION.chromium')
+    with open(version_file, 'r', encoding='utf-8') as f:
+      target_ver = f.read().strip()
+
+    package_filter = args.filter or []
+    filters = {
+        'subdir': lambda meta: (meta.upstream_subdir),
+        'chromium': lambda meta: (meta.is_chromium),
+        'chromium_copy': lambda meta: (meta.from_chromium),
+        '3p': lambda meta: (meta.in_3p),
+        'target': lambda meta: (meta.chromium_version == target_ver),
+    }
+    apply_filters = [
+        lambda meta, fn=v: not fn(meta)
+        for (k, v) in filters.items()
+        if k in package_filter
+    ]
+    apply_filters += [
+        lambda meta, fn=v: fn(meta)
+        for (k, v) in filters.items()
+        if k + '-' in package_filter
+    ]
+    formats = {
+        'all': ('{0:<30} {1:<40} {2:<40} {3:<20} {4:<20} {5:40} {6}',
+                ('name', 'dir', 'upstream_dir', 'chromium_version',
+                 'closest_version', 'git hash', 'git repo'), lambda meta: (
+                     meta.name,
+                     meta.dir,
+                     meta.upstream_subdir,
+                     meta.chromium_version,
+                     meta.closest_version,
+                     meta.git_hash,
+                     meta.git_repo,
+                 )),
+        'dir': ('{0:<30} {1:<40} {2:<40}', ('name', 'dir', 'upstream_dir'),
+                lambda meta: (meta.name, meta.dir, meta.upstream_subdir)),
+        'versions': ('{0:<40} {1:<30} {2:<20} {3:<20} {4:40}',
+                     ('dir', 'name', 'chromium_version', 'closest_version',
+                      'git hash'), lambda meta:
+                     (meta.dir, meta.name, meta.chromium_version, meta.
+                      closest_version, meta.git_hash))
+    }
+    format_tuple = formats[args.format]
+    fmt_string = format_tuple[0]
+    values_tuple = format_tuple[1]
+    print(fmt_string.format(*values_tuple))
+
   if args.files:
     _ = [validate_file(file) for file in args.files if filter_files(file)]
   else:  # Run all
-    args = ['git', 'ls-files']
-    p = subprocess.run(args, capture_output=True, text=True, check=True)
+    cmdargs = ['git', 'ls-files']
+    p = subprocess.run(cmdargs, capture_output=True, text=True, check=True)
     for f in p.stdout.splitlines():
       if filter_files(f):
-        validate_file(f)
+        if do_list:
+          list_file(f, format_tuple, apply_filters)
+        else:
+          validate_file(f)
 
 
 if __name__ == '__main__':
