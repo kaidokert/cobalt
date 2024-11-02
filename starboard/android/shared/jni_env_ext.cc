@@ -74,11 +74,11 @@ void JniEnvExt::OnThreadShutdown() {
 
 JniEnvExt* JniEnvExt::Get() {
   JNIEnv* env = nullptr;
-  if (JNI_OK != g_vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6)) {
+  if (JNI_OK != g_vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_4)) {
     // Tell the JVM our thread name so it doesn't change it.
     char thread_name[16];
     pthread_getname_np(pthread_self(), thread_name, sizeof(thread_name));
-    JavaVMAttachArgs args{JNI_VERSION_1_6, thread_name, NULL};
+    JavaVMAttachArgs args{JNI_VERSION_1_4, thread_name, NULL};
     g_vm->AttachCurrentThread(&env, &args);
     // We don't use the value, but any non-NULL means we have to detach.
     pthread_setspecific(g_tls_key, env);
