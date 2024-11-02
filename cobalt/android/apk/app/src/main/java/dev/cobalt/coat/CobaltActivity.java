@@ -44,7 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
-// import dev.cobalt.media.AudioOutputManager;
+import dev.cobalt.media.AudioOutputManager;
 import org.chromium.base.CommandLine;
 import org.chromium.base.MemoryPressureListener;
 import org.chromium.base.library_loader.LibraryLoader;
@@ -129,7 +129,23 @@ public abstract class CobaltActivity extends Activity {
 
       DeviceUtils.addDeviceSpecificUserAgentSwitch();
 
+      // This initializes JNI and ends up calling JNI_OnLoad in native code
       LibraryLoader.getInstance().ensureInitialized();
+
+      // StarboardBridge initialization must happen right after library loading,
+      // before Browser/Content module is started. It currently tracks its own JNI state
+      // variables, and needs to set up an early copy.
+
+      // TODO(b/374147993): how to handle deeplink in Chrobalt?
+      String startDeepLink = getIntentUrlAsString(getIntent());
+      if (getStarboardBridge() == null) {
+        // Cold start - Instantiate the singleton StarboardBridge.
+        StarboardBridge starboardBridge = createStarboardBridge(getArgs(), startDeepLink);
+        ((StarboardBridge.HostApplication) getApplication()).setStarboardBridge(starboardBridge);
+      } else {
+        // Warm start - Pass the deep link to the running Starboard app.
+        getStarboardBridge().handleDeepLink(startDeepLink);
+      }
 
       setContentView(R.layout.content_shell_activity);
       mShellManager = findViewById(R.id.shell_container);
@@ -321,17 +337,6 @@ public abstract class CobaltActivity extends Activity {
     // STREAM_MUSIC whenever the target activity or fragment is visible.
     setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-    // TODO(b/374147993): how to handle deeplink in Chrobalt?
-    String startDeepLink = getIntentUrlAsString(getIntent());
-    if (getStarboardBridge() == null) {
-      // Cold start - Instantiate the singleton StarboardBridge.
-      StarboardBridge starboardBridge = createStarboardBridge(getArgs(), startDeepLink);
-      ((StarboardBridge.HostApplication) getApplication()).setStarboardBridge(starboardBridge);
-    } else {
-      // Warm start - Pass the deep link to the running Starboard app.
-      getStarboardBridge().handleDeepLink(startDeepLink);
-    }
-
     setStartupUrl("https://www.youtube.com/tv");
     super.onCreate(savedInstanceState);
     createContent(savedInstanceState);
@@ -355,8 +360,7 @@ public abstract class CobaltActivity extends Activity {
   @Override
   protected void onStart() {
     if (!isReleaseBuild()) {
-      // TODO(cobalt): re-enable Cobalt AudioOutputManager.
-      // getStarboardBridge().getAudioOutputManager().dumpAllOutputDevices();
+      getStarboardBridge().getAudioOutputManager().dumpAllOutputDevices();
       MediaCodecCapabilitiesLogger.dumpAllDecoders();
     }
     if (forceCreateNewVideoSurfaceView) {
@@ -366,7 +370,7 @@ public abstract class CobaltActivity extends Activity {
 
     DisplayUtil.cacheDefaultDisplay(this);
     DisplayUtil.addDisplayListener(this);
-    // AudioOutputManager.addAudioDeviceListener(this);
+    AudioOutputManager.addAudioDeviceListener(this);
 
     getStarboardBridge().onActivityStart(this);
 

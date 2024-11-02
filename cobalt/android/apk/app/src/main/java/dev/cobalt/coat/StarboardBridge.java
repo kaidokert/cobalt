@@ -51,7 +51,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
-// import dev.cobalt.media.AudioOutputManager;
+
+import dev.cobalt.media.AudioOutputManager;
 
 /** Implementation of the required JNI methods called by the Starboard C++ code. */
 public class StarboardBridge {
@@ -66,7 +67,7 @@ public class StarboardBridge {
   private CobaltSystemConfigChangeReceiver sysConfigChangeReceiver;
   private CobaltTextToSpeechHelper ttsHelper;
   // TODO(cobalt): Re-enable these classes or remove if unnecessary.
-  // private AudioOutputManager audioOutputManager;
+  private AudioOutputManager audioOutputManager;
   // private CobaltMediaSession cobaltMediaSession;
   // private AudioPermissionRequester audioPermissionRequester;
   private NetworkStatus networkStatus;
@@ -111,10 +112,9 @@ public class StarboardBridge {
       String[] args,
       String startDeepLink) {
 
-    // TODO(cobalt): re-enable native initialization steps or remove.
     // Make sure the JNI stack is properly initialized first as there is
     // race condition as soon as any of the following objects creates a new thread.
-    // nativeInitialize();
+    nativeInitialize();
 
     this.appContext = appContext;
     this.activityHolder = activityHolder;
@@ -123,7 +123,7 @@ public class StarboardBridge {
     this.startDeepLink = startDeepLink;
     this.sysConfigChangeReceiver = new CobaltSystemConfigChangeReceiver(appContext, stopRequester);
     this.ttsHelper = new CobaltTextToSpeechHelper(appContext);
-    // this.audioOutputManager = new AudioOutputManager(appContext);
+    this.audioOutputManager = new AudioOutputManager(appContext);
     // this.cobaltMediaSession =
     //   new CobaltMediaSession(appContext, activityHolder, audioOutputManager, artworkDownloader);
     // this.audioPermissionRequester = new AudioPermissionRequester(appContext, activityHolder);
@@ -134,7 +134,7 @@ public class StarboardBridge {
     this.isAmatiDevice = appContext.getPackageManager().hasSystemFeature(AMATI_EXPERIENCE_FEATURE);
   }
 
-  // private boolean nativeInitialize();
+  private native boolean nativeInitialize();
 
   private long nativeCurrentMonotonicTime() {
     // TODO(b/375058047): re-enable monotonic time from native side.
@@ -639,11 +639,11 @@ public class StarboardBridge {
     return false;
   }
 
-  // @SuppressWarnings("unused")
-  // @UsedByNative
-  // AudioOutputManager getAudioOutputManager() {
-  //   return audioOutputManager;
-  // }
+  @SuppressWarnings("unused")
+  @UsedByNative
+  AudioOutputManager getAudioOutputManager() {
+     return audioOutputManager;
+  }
 
   /** Returns Java layer implementation for AudioPermissionRequester */
   // @SuppressWarnings("unused")
