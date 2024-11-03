@@ -90,7 +90,7 @@ public abstract class CobaltActivity extends Activity {
 
   private VideoSurfaceView videoSurfaceView;
 
-  private boolean forceCreateNewVideoSurfaceView = false;
+  private boolean forceCreateNewVideoSurfaceView;
 
   private long timeInNanoseconds;
 
@@ -177,11 +177,13 @@ public abstract class CobaltActivity extends Activity {
                   new BrowserStartupController.StartupCallback() {
                       @Override
                       public void onSuccess() {
+                      Log.i(TAG, "Browser process init succeeded");
                           finishInitialization(savedInstanceState);
                       }
 
                       @Override
                       public void onFailure() {
+                      Log.e(TAG, "Browser process init failed");
                           initializationFailed();
                       }
                   });
