@@ -168,26 +168,25 @@ public abstract class CobaltActivity extends Activity {
           mShellManager.setStartupUrl(Shell.sanitizeUrl(mStartupUrl));
       }
 
-      if (CommandLine.getInstance().hasSwitch(RUN_WEB_TESTS_SWITCH)) {
-          BrowserStartupController.getInstance().startBrowserProcessesSync(
-                  LibraryProcessType.PROCESS_BROWSER, false, false);
-      } else {
-          BrowserStartupController.getInstance().startBrowserProcessesAsync(
-                  LibraryProcessType.PROCESS_BROWSER, true, false,
-                  new BrowserStartupController.StartupCallback() {
-                      @Override
-                      public void onSuccess() {
+      // TODO(b/377025559): Bring back WebTests launch capability
+      BrowserStartupController.getInstance().startBrowserProcessesAsync(
+              LibraryProcessType.PROCESS_BROWSER,
+              false, // Do not start a separate GPU process
+              // TODO(b/377025565): Figure out what this means
+              false, // Do not start in "minimal" or paused mode
+              new BrowserStartupController.StartupCallback() {
+                  @Override
+                  public void onSuccess() {
                       Log.i(TAG, "Browser process init succeeded");
-                          finishInitialization(savedInstanceState);
-                      }
+                      finishInitialization(savedInstanceState);
+                  }
 
-                      @Override
-                      public void onFailure() {
+                  @Override
+                  public void onFailure() {
                       Log.e(TAG, "Browser process init failed");
-                          initializationFailed();
-                      }
-                  });
-      }
+                      initializationFailed();
+                  }
+              });
   }
 
   // Initially copied from ContentShellActiviy.java
