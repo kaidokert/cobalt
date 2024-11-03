@@ -83,7 +83,10 @@ std::string GetStartDeepLink() {
   ScopedLocalJavaRef<jstring> j_url(env->CallStarboardObjectMethodOrAbort(
       "getStartDeepLink", "()Ljava/lang/String;"));
   if (j_url) {
-    start_url = env->GetStringStandardUTFOrAbort(j_url.Get());
+    auto j_url_str = j_url.Get();
+    if (env->GetStringLength(j_url_str) != 0) {
+      start_url = env->GetStringStandardUTFOrAbort(j_url_str);
+    }
   }
   SB_LOG(INFO) << "GetStartDeepLink: " << start_url;
   return start_url;
@@ -296,7 +299,7 @@ Java_dev_cobalt_coat_StarboardBridge_nativeInitialize(
   JniEnvExt::Initialize(env, starboard_bridge);
 }
 
-extern "C" SB_EXPORT_PLATFORM void 
+extern "C" SB_EXPORT_PLATFORM void
 Java_dev_cobalt_coat_StarboardBridge_startNativeStarboard(
     JniEnvExt* env,
     jobject starboard_bridge) {
