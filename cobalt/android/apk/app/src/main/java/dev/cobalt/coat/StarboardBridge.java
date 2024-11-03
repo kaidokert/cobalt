@@ -38,6 +38,7 @@ import android.view.InputDevice;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.CaptioningManager;
 import androidx.annotation.Nullable;
+import dev.cobalt.media.AudioOutputManager;
 import dev.cobalt.util.DisplayUtil;
 import dev.cobalt.util.Holder;
 import dev.cobalt.util.Log;
@@ -51,8 +52,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import dev.cobalt.media.AudioOutputManager;
 
 /** Implementation of the required JNI methods called by the Starboard C++ code. */
 public class StarboardBridge {
@@ -285,7 +284,7 @@ public class StarboardBridge {
   @SuppressWarnings("unused")
   @UsedByNative
   public Context getApplicationContext() {
-    if (appContext == null ) {
+    if (appContext == null) {
       throw new IllegalArgumentException("appContext cannot be null");
     }
     return appContext;
@@ -314,7 +313,7 @@ public class StarboardBridge {
   @SuppressWarnings("unused")
   @UsedByNative
   protected String[] getArgs() {
-    if (args == null ) {
+    if (args == null) {
       throw new IllegalArgumentException("args cannot be null");
     }
     return args;
@@ -324,7 +323,7 @@ public class StarboardBridge {
   @SuppressWarnings("unused")
   @UsedByNative
   protected String getStartDeepLink() {
-    if (startDeepLink == null ) {
+    if (startDeepLink == null) {
       throw new IllegalArgumentException("startDeepLink cannot be null");
     }
     return startDeepLink;
@@ -421,7 +420,7 @@ public class StarboardBridge {
   @SuppressWarnings("unused")
   @UsedByNative
   CobaltTextToSpeechHelper getTextToSpeechHelper() {
-    if (ttsHelper == null ) {
+    if (ttsHelper == null) {
       throw new IllegalArgumentException("ttsHelper cannot be null for native code");
     }
     return ttsHelper;
@@ -472,7 +471,7 @@ public class StarboardBridge {
   @SuppressWarnings("unused")
   @UsedByNative
   public ResourceOverlay getResourceOverlay() {
-    if (resourceOverlay == null ) {
+    if (resourceOverlay == null) {
       throw new IllegalArgumentException("resourceOverlay cannot be null for native code");
     }
     return resourceOverlay;
@@ -518,7 +517,7 @@ public class StarboardBridge {
   @SuppressWarnings("unused")
   @UsedByNative
   boolean isNetworkConnected() {
-    if (networkStatus == null ) {
+    if (networkStatus == null) {
       throw new IllegalArgumentException("networkStatus cannot be null for native code");
     }
     return networkStatus.isConnected();
@@ -617,7 +616,7 @@ public class StarboardBridge {
       long duration) {
 
     // TODO(b/377019873): re-enable
-    Log.e(TAG,"MediaSession is disabled");
+    Log.e(TAG, "MediaSession is disabled");
     // cobaltMediaSession.updateMediaSession(
     //     playbackState, actions, positionMs, speed, title, artist, album, artwork, duration);
   }
@@ -626,7 +625,7 @@ public class StarboardBridge {
   @UsedByNative
   public void deactivateMediaSession() {
     // TODO(b/377019873): re-enable
-    Log.e(TAG,"MediaSession is disabled");
+    Log.e(TAG, "MediaSession is disabled");
     // cobaltMediaSession.deactivateMediaSession();
   }
 
@@ -663,7 +662,7 @@ public class StarboardBridge {
   @UsedByNative
   protected String getAdvertisingId() {
     // TODO(b/377049113): re-enable
-    Log.e(TAG,"IFA is disabled");
+    Log.e(TAG, "IFA is disabled");
     // return this.advertisingId.getId();
     return "";
   }
@@ -673,7 +672,7 @@ public class StarboardBridge {
   @UsedByNative
   protected boolean getLimitAdTracking() {
     // TODO(b/377049113): re-enable
-    Log.e(TAG,"IFA is disabled");
+    Log.e(TAG, "IFA is disabled");
     // return this.advertisingId.isLimitAdTrackingEnabled();
     return false;
   }
@@ -681,10 +680,10 @@ public class StarboardBridge {
   @SuppressWarnings("unused")
   @UsedByNative
   AudioOutputManager getAudioOutputManager() {
-    if (audioOutputManager == null ) {
+    if (audioOutputManager == null) {
       throw new IllegalArgumentException("audioOutputManager cannot be null for native code");
     }
-     return audioOutputManager;
+    return audioOutputManager;
   }
 
   /** Returns Java layer implementation for AudioPermissionRequester */
