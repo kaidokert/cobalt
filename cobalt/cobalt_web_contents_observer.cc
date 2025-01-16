@@ -16,6 +16,21 @@
 
 namespace cobalt {
 
+CobaltWebContentsObserver::CobaltWebContentsObserver(
+    content::WebContents* web_contents)
+    : content::WebContentsObserver(web_contents) {
+  // Create browser-side mojo service component
+  js_communication_host_ =
+      std::make_unique<js_injection::JsCommunicationHost>(web_contents);
+
+  // Inject a script at document start for all origins
+  const std::u16string script(u"console.log('Hello from JS injection');");
+  const std::vector<std::string> allowed_origins({"*"});
+  auto result = js_communication_host_->AddDocumentStartJavaScript(
+      script, allowed_origins);
+  CHECK(!result.error_message);
+}
+
 // Placeholder for a WebContentsObserver override
 void CobaltWebContentsObserver::PrimaryMainDocumentElementAvailable() {
   LOG(INFO) << "Cobalt::PrimaryMainDocumentElementAvailable";
