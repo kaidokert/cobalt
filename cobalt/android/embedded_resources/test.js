@@ -1,1 +1,1 @@
-console.log("Hey i'm here");
+console.log("Hey i'm here - from embedded script");

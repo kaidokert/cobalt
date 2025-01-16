@@ -234,7 +234,6 @@ template("content_shell_apk_tmpl") {
   }
 }
 
-
 config("embed_polyfilled_javascript_config") {
   include_dirs = [ root_gen_dir ]
 }
@@ -242,11 +241,11 @@ config("embed_polyfilled_javascript_config") {
 action("embed_polyfilled_javascript") {
   script = "//cobalt/build/generate_data_header.py"
 
-  inputs = [ 
+  inputs = [
     "embedded_resources/test.js",
     "embedded_resources/test2.js",
   ]
-  outputs = [ "$target_gen_dir/embedded_resources/test_js.h" ]
+  outputs = [ "$target_gen_dir/embedded_resources/embedded_js.h" ]
 
   public_configs = [ ":embed_polyfilled_javascript_config" ]
 
@@ -256,7 +255,6 @@ action("embed_polyfilled_javascript") {
     rebase_path("embedded_resources", root_build_dir),
   ]
 }
-
 
 # Copied from target: libcontent_shell_content_view
 # TODO(b/376867565) rename this library, NO shell
