@@ -15,6 +15,10 @@ OriginAccessList::~OriginAccessList() = default;
 void OriginAccessList::SetAllowListForOrigin(
     const url::Origin& source_origin,
     const std::vector<CorsOriginPatternPtr>& patterns) {
+  LOG(ERROR) << "OriginAccessList::SetAllowListForOrigin for origin:" << source_origin.Serialize();
+  for(auto &pat : patterns) {
+      LOG(ERROR) << "Adding allow list from " << pat;
+  }
   SetForOrigin(source_origin, patterns, &map_, MapType::kAllowPatterns);
 }
 

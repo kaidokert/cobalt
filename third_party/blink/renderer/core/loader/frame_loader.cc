@@ -536,6 +536,7 @@ bool FrameLoader::AllowRequestForThisFrame(const FrameLoadRequest& request) {
   }
 
   if (!request.CanDisplay(url)) {
+    LOG(ERROR) << " frame_loader.cc: Denying load";
     request.GetOriginWindow()->AddConsoleMessage(
         MakeGarbageCollected<ConsoleMessage>(
             mojom::ConsoleMessageSource::kSecurity,

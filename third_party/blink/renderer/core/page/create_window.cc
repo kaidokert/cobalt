@@ -303,6 +303,7 @@ Frame* CreateNewWindow(LocalFrame& opener_frame,
   }
 
   if (!opener_window.GetSecurityOrigin()->CanDisplay(url)) {
+    LOG(ERROR) << " create_window.cc: Denying load";
     opener_window.AddConsoleMessage(MakeGarbageCollected<ConsoleMessage>(
         mojom::blink::ConsoleMessageSource::kSecurity,
         mojom::blink::ConsoleMessageLevel::kError,

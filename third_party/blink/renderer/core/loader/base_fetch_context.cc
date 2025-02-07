@@ -601,6 +601,7 @@ BaseFetchContext::CanRequestInternal(
   DCHECK(request_mode == network::mojom::RequestMode::kNavigate || origin);
   if (request_mode != network::mojom::RequestMode::kNavigate &&
       !resource_request.CanDisplay(url)) {
+    LOG(ERROR) << " base_fetch_context.cc: Denying load";
     if (reporting_disposition == ReportingDisposition::kReport) {
       console_logger_->AddConsoleMessage(MakeGarbageCollected<ConsoleMessage>(
           mojom::ConsoleMessageSource::kJavaScript,

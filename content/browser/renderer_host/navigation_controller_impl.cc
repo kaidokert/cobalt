@@ -1269,6 +1269,8 @@ base::WeakPtr<NavigationHandle> NavigationControllerImpl::LoadURL(
 
 base::WeakPtr<NavigationHandle> NavigationControllerImpl::LoadURLWithParams(
     const LoadURLParams& params) {
+  LOG(ERROR) << "--> LoadURLWithParams";
+
   if (params.is_renderer_initiated)
     DCHECK(params.initiator_origin.has_value());
 
@@ -3494,6 +3496,9 @@ void NavigationControllerImpl::FindFramesToNavigate(
 
 base::WeakPtr<NavigationHandle> NavigationControllerImpl::NavigateWithoutEntry(
     const LoadURLParams& params) {
+
+  LOG(ERROR) << "Navigate event";
+
   // Find the appropriate FrameTreeNode.
   FrameTreeNode* node = nullptr;
   if (params.frame_tree_node_id != RenderFrameHost::kNoFrameTreeNodeId ||

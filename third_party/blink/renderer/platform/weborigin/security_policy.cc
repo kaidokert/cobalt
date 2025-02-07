@@ -184,6 +184,11 @@ void SecurityPolicy::AddOriginAccessAllowListEntry(
     const network::mojom::CorsPortMatchMode port_match_mode,
     const network::mojom::CorsOriginAccessMatchPriority priority) {
   base::AutoLock locker(GetLock());
+
+  LOG(ERROR) << "Adding allow list from " <<
+    "origin:" << source_origin.ToString() <<
+    "destination_protocol:" << destination_protocol <<
+    "destination_domain:" << destination_domain;
   GetOriginAccessList().AddAllowListEntryForOrigin(
       source_origin.ToUrlOrigin(), destination_protocol.Utf8(),
       destination_domain.Utf8(), port, domain_match_mode, port_match_mode,

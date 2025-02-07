@@ -401,19 +401,27 @@ bool SecurityOrigin::CanReadContent(const KURL& url) const {
 }
 
 bool SecurityOrigin::CanDisplay(const KURL& url) const {
+  LOG(ERROR) << "SecurityOrigin::CanDisplay checking" << url.GetString();
+
   if (universal_access_)
     return true;
 
   String protocol = url.Protocol();
-  if (SchemeRegistry::CanDisplayOnlyIfCanRequest(protocol))
+  if (SchemeRegistry::CanDisplayOnlyIfCanRequest(protocol)) {
+    LOG(ERROR) << "SecurityOrigin::CanDisplay delegating to CanRequest";
     return CanRequest(url);
+  }
 
   if (SchemeRegistry::ShouldTreatURLSchemeAsDisplayIsolated(protocol)) {
+    LOG(ERROR) << "SecurityOrigin::CanDisplay delegating to IsOriginAccessToURLAllowed";
     return protocol_ == protocol ||
            SecurityPolicy::IsOriginAccessToURLAllowed(this, url);
   }
 
   if (base::Contains(url::GetLocalSchemes(), protocol.Ascii())) {
+    LOG(ERROR) << "SecurityOrigin::CanDisplay delegating to CanLoadLocalResources";
+    LOG(ERROR) << "CanLoadLocalResources: " << CanLoadLocalResources();
+    LOG(ERROR) << "IsOriginAccessToURLAllowed::" << SecurityPolicy::IsOriginAccessToURLAllowed(this, url);
     return CanLoadLocalResources() ||
            SecurityPolicy::IsOriginAccessToURLAllowed(this, url);
   }

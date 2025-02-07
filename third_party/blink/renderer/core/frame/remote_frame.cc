@@ -189,6 +189,7 @@ void RemoteFrame::Navigate(FrameLoadRequest& frame_request,
   // the frame containing the form has been deleted in between.
 
   if (!frame_request.CanDisplay(url)) {
+    LOG(ERROR) << " remote_frame.cc: Denying load";
     window->AddConsoleMessage(MakeGarbageCollected<ConsoleMessage>(
         mojom::blink::ConsoleMessageSource::kSecurity,
         mojom::blink::ConsoleMessageLevel::kError,

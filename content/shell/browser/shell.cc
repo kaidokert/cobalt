@@ -239,6 +239,7 @@ void Shell::RenderFrameCreated(RenderFrameHost* frame_host) {
 }
 
 void Shell::LoadURL(const GURL& url) {
+  LOG(ERROR) << "-> Shell::LoadURL()" << url.spec();
   LoadURLForFrame(
       url, std::string(),
       ui::PageTransitionFromInt(ui::PAGE_TRANSITION_TYPED |
@@ -248,6 +249,8 @@ void Shell::LoadURL(const GURL& url) {
 void Shell::LoadURLForFrame(const GURL& url,
                             const std::string& frame_name,
                             ui::PageTransition transition_type) {
+  LOG(ERROR) << "-> Shell::LoadURLForFrame";
+
   NavigationController::LoadURLParams params(url);
   params.frame_name = frame_name;
   params.transition_type = transition_type;
@@ -274,6 +277,8 @@ void Shell::LoadDataWithBaseURLInternal(const GURL& url,
                                         const std::string& data,
                                         const GURL& base_url,
                                         bool load_as_string) {
+  LOG(ERROR) << "-> Shell::LoadDataWithBaseURLInternal";
+
 #if !BUILDFLAG(IS_ANDROID)
   DCHECK(!load_as_string);  // Only supported on Android.
 #endif
@@ -401,6 +406,8 @@ void Shell::URLEntered(const std::string& url_string) {
 
 WebContents* Shell::OpenURLFromTab(WebContents* source,
                                    const OpenURLParams& params) {
+  LOG(ERROR) << "-> Shell::OpenURLFromTab";
+
   WebContents* target = nullptr;
   switch (params.disposition) {
     case WindowOpenDisposition::CURRENT_TAB:
