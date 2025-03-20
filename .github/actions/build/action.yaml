@@ -29,53 +29,19 @@ runs:
           cd src
           gn args --list --short --overrides-only out/${{ matrix.platform }}_${{ matrix.config }}
         shell: bash
-      - name: Get list of changed files
-        if: github.event_name == 'pull_request'
-        id: changed-files
-        run: |
-          set -x
-          cd src
-          changed_files=($(git diff --name-only -r ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}))
-          # Convert the bash array to a JSON array.
-          changed_files_json=$(jq -nc '$ARGS.positional' --args ${changed_files[@]})
-          echo "changed_files_json=${changed_files_json}" >> $GITHUB_OUTPUT
-        shell: bash
-      - name: Calculate test targets
-        if: matrix.config == 'devel' && inputs.test_root_target != 'null'
-        id: calculate-test-targets
+      - name: Calculate Test Targets
+        # TODO(b/382508397): Replace hardcoded list with dynamically generated one.
+        id: test-targets
+        if: inputs.upload_on_host_test_artifacts == 'true' || inputs.upload_on_device_test_artifacts == 'true'
         env:
-          CHANGED_FILES_JSON: ${{ steps.changed-files.outputs.changed_files_json }}
-          ROOT_TARGET: ${{ inputs.test_root_target }}
-          TEST_TARGETS_JSON_FILE: out/${{ matrix.platform }}_${{ matrix.config }}/test_targets.json
+          TEST_TARGETS_JSON_FILE: cobalt/build/testing/targets/${{ matrix.platform }}/test_targets.json
         run: |
-          set -x
+          set -ex
           cd src
-          gn desc out/${{ matrix.platform }}_${{ matrix.config }}/ "*" --format=json > gn_desc.json
-          # Trim any warning gn printed before the json (all lines above the first curly brace).
-          sed -n '/^{/,$p' -i gn_desc.json
-
-          changed_files_arg=""
-          if [[ -n "${CHANGED_FILES_JSON}" ]]; then
-            changed_files_arg="--sources $(echo ${CHANGED_FILES_JSON} | jq -cr '. | join(",")')"
-          fi
-
-          vpython3 cobalt/build/test_targets.py \
-              --root-target "${ROOT_TARGET}" \
-              ${changed_files_arg} \
-              --gn-json gn_desc.json \
-              --json-output > "${TEST_TARGETS_JSON_FILE}"
-
-          echo "test_targets_json_file=${TEST_TARGETS_JSON_FILE}" >> $GITHUB_OUTPUT
-
-          test_targets_json=$(cat ${TEST_TARGETS_JSON_FILE} | jq -cr '.test_targets')
-          echo "test_targets_json=${test_targets_json}" >> $GITHUB_OUTPUT
-
-          test_targets_count=$(echo ${test_targets_json} | jq -cr 'length')
-          echo "test_targets_count=${test_targets_count}" >> $GITHUB_OUTPUT
+          echo "test_targets=$(cat ${TEST_TARGETS_JSON_FILE} | jq -c '.test_targets')" >> $GITHUB_OUTPUT
         shell: bash
       - name: Ninja build test targets
-        if: ${{ matrix.config == 'devel' && fromJSON(steps.calculate-test-targets.outputs.test_targets_count || 0) > 0 }}
-        id: build-test-targets
+        if: inputs.upload_on_host_test_artifacts == 'true' || inputs.upload_on_device_test_artifacts == 'true'
         run: |
           set -ex
           cd src
