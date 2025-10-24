@@ -34,6 +34,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
+import dev.cobalt.browser.CobaltContentBrowserClient;
 import dev.cobalt.coat.javabridge.CobaltJavaScriptAndroidObject;
 import dev.cobalt.coat.javabridge.CobaltJavaScriptInterface;
 import dev.cobalt.coat.javabridge.H5vccPlatformService;
@@ -57,8 +58,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import org.chromium.base.CommandLine;
-import org.chromium.base.annotations.JNINamespace;
-import org.chromium.base.annotations.NativeMethods;
 import org.chromium.base.library_loader.LibraryLoader;
 import org.chromium.base.library_loader.LibraryProcessType;
 import org.chromium.base.memory.MemoryPressureMonitor;
@@ -73,11 +72,8 @@ import org.chromium.net.NetworkChangeNotifier;
 import org.chromium.ui.base.ActivityWindowAndroid;
 import org.chromium.ui.base.IntentRequestTracker;
 import org.chromium.net.NetworkChangeNotifier;
-import org.jni_zero.JNINamespace;
-import org.jni_zero.NativeMethods;
 
 /** Native activity that has the required JNI methods called by the Starboard implementation. */
-@JNINamespace("cobalt")
 public abstract class CobaltActivity extends Activity {
   private static final String URL_ARG = "--url=";
   private static final String META_DATA_APP_URL = "cobalt.APP_URL";
@@ -434,7 +430,7 @@ public abstract class CobaltActivity extends Activity {
   protected void onPause() {
     WebContents webContents = getActiveWebContents();
     if (webContents != null) {
-      CobaltActivityJni.get().flushCookiesAndLocalStorage();
+      CobaltContentBrowserClient.flushCookiesAndLocalStorage();
     }
     super.onPause();
   }
