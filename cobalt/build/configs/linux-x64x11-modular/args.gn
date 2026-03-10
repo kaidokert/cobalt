@@ -18,10 +18,9 @@ enable_library_cdms = false
 is_cfi = false
 use_thin_lto = false
 
-<<<<<<< HEAD
 # We don't currently use sandboxes in Cobalt Evergreen.
 v8_enable_sandbox = false
-=======
+
 # Disable PDF support.
 enable_pdf = false
 
@@ -30,4 +29,3 @@ enable_plugins = false
 
 # Disable printing support.
 enable_printing = false
->>>>>>> f4c69ce4c6 (Disable plugins, pdf and printing (#7888))
