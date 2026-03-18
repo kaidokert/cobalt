@@ -3,11 +3,13 @@
 # found in the LICENSE file.
 
 import("//pdf/features.gni")
+import("//components/lens/features.gni")
 
 # Contained Lens dependencies are currently for desktop platforms only
 assert(!is_android, "Lens Overlay is for desktop platforms only")
 
-source_set("lens") {
+if (enable_lens_desktop) {
+  source_set("lens") {
   # The public interface is intentionally minimal. There should be a small
   # number of entry points and publicly used headers.
   public = [
@@ -193,6 +195,16 @@ source_set("impl") {
       "//chrome/browser/pdf",
       "//components/pdf/browser",
     ]
+  }
+}
+} else {
+  source_set("lens") {
+    sources = []
+    deps = [ "//base" ]
+  }
+  source_set("impl") {
+    sources = []
+    deps = [ ":lens" ]
   }
 }
 

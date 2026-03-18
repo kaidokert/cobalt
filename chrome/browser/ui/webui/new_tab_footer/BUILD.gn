@@ -40,6 +40,7 @@ source_set("impl") {
     "//chrome/browser/resources/new_tab_footer:resources_grit",
     "//chrome/browser/resources/new_tab_shared:resources_grit",
     "//chrome/browser/search",
+    "//chrome/browser/ui",
     "//chrome/browser/ui/browser_window",
     "//chrome/browser/ui/views/side_panel:side_panel",
     "//chrome/browser/ui/webui:webui_util",

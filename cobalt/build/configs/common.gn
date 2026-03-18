@@ -31,6 +31,10 @@ mojo_media_services = [
   "cdm",
 ]
 
+safe_browsing_mode = 0
+enable_supervised_users = false
+enable_compose = false
+
 # WebXR and implementations are not needed, remove.
 enable_arcore = false
 enable_cardboard = false
@@ -87,7 +91,6 @@ rtc_include_dav1d_in_internal_decoder_factory = false
 
 # Disable Chrome branding and related enterprise features for Cobalt.
 is_chrome_branded = false
-enable_enterprise_companion = false
 
 # Disable extensions and NaCl for Cobalt.
 enable_extensions = false
@@ -95,3 +98,14 @@ enable_nacl = false
 
 # Disable background mode for Cobalt.
 enable_background_mode = false
+
+# Disable NACL for Cobalt.
+enable_nacl = false
+
+# Disable Chromium-specific DRM features for Cobalt.
+enable_library_cdms = false
+enable_widevine = false
+
+# Disable Chromium-specific DRM features for Cobalt.
+enable_library_cdms = false
+enable_widevine = false

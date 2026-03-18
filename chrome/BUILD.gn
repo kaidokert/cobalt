@@ -1431,6 +1431,7 @@ if (is_win) {
   }
 }
 
+if (!is_cobalt) {
 group("dependencies") {
   public_deps = [
     "//build:branding_buildflags",
@@ -1485,6 +1486,7 @@ group("dependencies") {
     ]
   }
 }
+}
 
 if (is_win) {
   process_version_rc_template("chrome_exe_version") {
@@ -1532,6 +1534,7 @@ copy("visual_elements_resources") {
   outputs = [ "$root_out_dir/{{source_file_part}}" ]
 }
 
+if (!is_cobalt) {
 group("resources") {
   public_deps = [
     "//chrome/browser:resources",
@@ -1539,13 +1542,16 @@ group("resources") {
     "//chrome/renderer:resources",
   ]
 }
+}
 
 group("extra_resources") {
   # Deps should be same as those in chrome_extra_paks() within chrome_paks.gni.
   public_deps = [
     "//chrome/browser/resources:resources",
-    "//components/autofill/core/browser:autofill_address_rewriter_resources",
   ]
+  if (!is_cobalt) {
+    public_deps += [ "//components/autofill/core/browser:autofill_address_rewriter_resources" ]
+  }
 }
 
 if (is_chrome_branded && !is_android) {
@@ -1577,7 +1583,7 @@ if (is_chrome_branded && !is_android) {
   }
 }
 
-if (!is_android) {
+if (!is_android && !is_cobalt) {
   chrome_paks("packed_resources") {
     if (is_mac) {
       output_dir = "$root_gen_dir/repack"
@@ -1605,6 +1611,7 @@ if (!is_android) {
       files_to_hash += [ "chrome_200_percent.pak" ]
     }
   }
+}
 
   # This is extracted to deserialize build dependency around
   # :packed_resources_integrity_hash and improve build parallelism.
@@ -1614,7 +1621,6 @@ if (!is_android) {
     # chrome/app/packed_resources_integrity.cc file is generated in dependency.
     deps = [ ":packed_resources_integrity" ]
   }
-}
 
 repack("browser_tests_pak") {
   testonly = true

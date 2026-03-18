@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+assert(!is_cobalt, "chrome/browser/ui/tabs/BUILD.gn should not be included for Cobalt")
+
 assert(is_win || is_mac || is_linux || is_chromeos || is_android)
 
 import("//chrome/common/features.gni")
@@ -320,10 +322,13 @@ if (!is_android) {
       ":tab_strip",
       ":tabs",
       "//chrome/app:command_ids",
-      "//chrome/app/vector_icons",
       "//chrome/browser/commerce",
       "//chrome/browser/content_settings:content_settings_factory",
-      "//chrome/browser/contextual_cueing:contextual_cueing",
+    ]
+    if (enable_glic) {
+      deps += [ "//chrome/browser/contextual_cueing:contextual_cueing" ]
+    }
+    deps += [
       "//chrome/browser/favicon",
       "//chrome/browser/fingerprinting_protection",
       "//chrome/browser/image_fetcher",

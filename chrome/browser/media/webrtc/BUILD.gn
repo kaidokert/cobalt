@@ -192,13 +192,15 @@ source_set("webrtc") {
       "//chrome/browser/ui/tabs:tab_strip_model_observer",
       "//extensions/buildflags",
     ]
-    deps += [
-      "//chrome/browser/ui:browser_list",
-      "//chrome/browser/ui/tabs:tab_strip",
-      "//extensions/browser",
-      "//extensions/browser/kiosk",
-      "//extensions/common",
-    ]
+    if (enable_extensions_core) {
+      deps += [
+        "//chrome/browser/ui:browser_list",
+        "//chrome/browser/ui/tabs:tab_strip",
+        "//extensions/browser",
+        "//extensions/browser/kiosk",
+        "//extensions/common",
+      ]
+    }
   }
 
   if (enable_screen_capture) {

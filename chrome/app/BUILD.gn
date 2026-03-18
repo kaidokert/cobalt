@@ -119,6 +119,7 @@ grit_strings("branded_strings") {
   }
 }
 
+if (!is_cobalt) {
 static_library("test_support") {
   testonly = true
   visibility = [ "//chrome/test:test_support" ]
@@ -206,4 +207,5 @@ static_library("test_support") {
       "//components/nacl/renderer/plugin:nacl_trusted_plugin",
     ]
   }
+}
 }

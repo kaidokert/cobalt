@@ -69,11 +69,13 @@ source_set("glic") {
     "//components/variations",
     "//content/public/browser",
     "//google_apis/common:common",
-    "//pdf/mojom",
     "//ui/views:views",
     "//ui/views/controls/webview",
     "//ui/webui",
   ]
+  if (enable_pdf) {
+    public_deps += [ "//pdf/mojom" ]
+  }
   deps = [
     "//chrome/browser/actor:types",
     "//chrome/common",
@@ -170,8 +172,6 @@ source_set("impl") {
     "//components/metrics_services_manager:metrics_services_manager",
     "//components/optimization_guide/core",
     "//components/optimization_guide/proto:optimization_guide_proto",
-    "//components/pdf/browser:browser",
-    "//components/pdf/common:constants",
     "//components/pref_registry",
     "//components/prefs",
     "//components/sessions",
@@ -181,6 +181,13 @@ source_set("impl") {
     "//ui/webui",
     "//url",
   ]
+
+  if (enable_pdf) {
+    deps += [
+      "//components/pdf/browser:browser",
+      "//components/pdf/common:constants",
+    ]
+  }
 
   if (is_mac) {
     deps += [ "//ui/accelerated_widget_mac" ]
