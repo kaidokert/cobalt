@@ -28,6 +28,7 @@
 
 namespace {
 
+#if !BUILDFLAG(IS_COBALT)
 std::string RandASCIIString(size_t length) {
   std::string result;
   const int kMin = static_cast<int>(' ');
@@ -37,7 +38,9 @@ std::string RandASCIIString(size_t length) {
   }
   return result;
 }
+#endif
 
+#if !BUILDFLAG(IS_COBALT)
 std::string DeleteDirectiveToString(
     const sync_pb::HistoryDeleteDirectiveSpecifics& delete_directive) {
 #if !BUILDFLAG(IS_COBALT)
@@ -50,6 +53,7 @@ std::string DeleteDirectiveToString(
   return "HIDDEN";
 #endif
 }
+#endif
 
 #if !BUILDFLAG(IS_COBALT)
 // Compare time range directives first by start time, then by end time.
@@ -65,6 +69,7 @@ bool TimeRangeLessThan(const syncer::SyncData& data1,
 }
 #endif
 
+#if !BUILDFLAG(IS_COBALT)
 // Converts a Unix timestamp in microseconds to a base::Time value.
 base::Time UnixUsecToTime(int64_t usec) {
   return base::Time::UnixEpoch() + base::Microseconds(usec);
@@ -85,8 +90,9 @@ void GetTimesFromGlobalIds(
         base::Time::FromInternalValue(global_id_directive.global_id(i)));
   }
 }
+#endif
 
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) && !BUILDFLAG(IS_COBALT)
 // Checks that the given delete directive is properly formed.
 void CheckDeleteDirectiveValid(
     const sync_pb::HistoryDeleteDirectiveSpecifics& delete_directive) {
@@ -134,7 +140,7 @@ void CheckDeleteDirectiveValid(
         << "Delete directive has no time range, global ID or url directive";
   }
 }
-#endif  // !defined(NDEBUG)
+#endif
 
 }  // anonymous namespace
 
@@ -454,7 +460,7 @@ DeleteDirectiveHandler::ProcessLocalDeleteDirective(
     return syncer::ModelError(FROM_HERE,
                               "Cannot send local delete directive to sync");
   }
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) && !BUILDFLAG(IS_COBALT)
   CheckDeleteDirectiveValid(delete_directive);
 #endif
 
@@ -472,6 +478,7 @@ DeleteDirectiveHandler::ProcessLocalDeleteDirective(
   return sync_processor_->ProcessSyncChanges(FROM_HERE, changes);
 }
 
+#if !BUILDFLAG(IS_COBALT)
 void DeleteDirectiveHandler::WaitUntilReadyToSync(base::OnceClosure done) {
   DCHECK(!wait_until_ready_to_sync_cb_);
   if (backend_loaded_) {
@@ -481,6 +488,7 @@ void DeleteDirectiveHandler::WaitUntilReadyToSync(base::OnceClosure done) {
     wait_until_ready_to_sync_cb_ = std::move(done);
   }
 }
+#endif
 
 std::optional<syncer::ModelError>
 DeleteDirectiveHandler::MergeDataAndStartSyncing(
@@ -546,10 +554,13 @@ std::optional<syncer::ModelError> DeleteDirectiveHandler::ProcessSyncChanges(
   return std::nullopt;
 }
 
+#if !BUILDFLAG(IS_COBALT)
 base::WeakPtr<syncer::SyncableService> DeleteDirectiveHandler::AsWeakPtr() {
   return weak_ptr_factory_.GetWeakPtr();
 }
+#endif
 
+#if !BUILDFLAG(IS_COBALT)
 void DeleteDirectiveHandler::FinishProcessing(
     PostProcessingAction post_processing_action,
     const syncer::SyncDataList& delete_directives) {
@@ -567,8 +578,42 @@ void DeleteDirectiveHandler::FinishProcessing(
     sync_processor_->ProcessSyncChanges(FROM_HERE, change_list);
   }
 }
+#endif
+#else
+std::optional<syncer::ModelError>
+DeleteDirectiveHandler::ProcessLocalDeleteDirective(
+    const sync_pb::HistoryDeleteDirectiveSpecifics& delete_directive) {
+  return std::nullopt;
+}
+
+void DeleteDirectiveHandler::WaitUntilReadyToSync(base::OnceClosure done) {
+  std::move(done).Run();
+}
+
+std::optional<syncer::ModelError>
+DeleteDirectiveHandler::MergeDataAndStartSyncing(
+    syncer::DataType type,
+    const syncer::SyncDataList& initial_sync_data,
+    std::unique_ptr<syncer::SyncChangeProcessor> sync_processor) {
+  return std::nullopt;
+}
+
+void DeleteDirectiveHandler::StopSyncing(syncer::DataType type) {}
+
+std::optional<syncer::ModelError> DeleteDirectiveHandler::ProcessSyncChanges(
+    const base::Location& from_here,
+    const syncer::SyncChangeList& change_list) {
+  return std::nullopt;
+}
+
+base::WeakPtr<syncer::SyncableService> DeleteDirectiveHandler::AsWeakPtr() {
+  return nullptr;
+}
+
+void DeleteDirectiveHandler::FinishProcessing(
+    PostProcessingAction post_processing_action,
+    const syncer::SyncDataList& delete_directives) {}
+#endif
 
 }  // namespace history
-
-#endif
 
