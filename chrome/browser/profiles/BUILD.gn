@@ -308,11 +308,7 @@ source_set("profiles_extra_parts_impl") {
       "//chrome/browser/accessibility/tree_fixing:service",
       "//chrome/browser/apps/app_service",
       "//chrome/browser/autofill",
-    ]
-    if (enable_glic) {
-      deps += [ "//chrome/browser/contextual_cueing" ]
-    }
-    deps += [
+      "//chrome/browser/contextual_cueing",
       "//chrome/browser/devtools",
       "//chrome/browser/feedback",
       "//chrome/browser/hid",
@@ -322,7 +318,6 @@ source_set("profiles_extra_parts_impl") {
       "//chrome/browser/search/background",
       "//chrome/browser/search_engine_choice",
       "//chrome/browser/themes",
-      "//chrome/browser/ui:ui",
       "//chrome/browser/ui/global_error",
       "//chrome/browser/ui/global_media_controls",
       "//chrome/browser/ui/media_router",

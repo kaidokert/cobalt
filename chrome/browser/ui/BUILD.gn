@@ -1173,15 +1173,9 @@ static_library("ui") {
       "tab_sharing/tab_sharing_infobar_delegate.cc",
       "tab_sharing/tab_sharing_infobar_delegate.h",
       "tab_sharing/tab_sharing_ui.h",
-    ]
-    if (enable_glic) {
-      sources += [
-        "tabs/glic_nudge_controller.cc",
-        "tabs/glic_nudge_controller.h",
-        "tabs/glic_nudge_observer.h",
-      ]
-    }
-    sources += [
+      "tabs/glic_nudge_controller.cc",
+      "tabs/glic_nudge_controller.h",
+      "tabs/glic_nudge_observer.h",
       "tabs/organization/logging_util.cc",
       "tabs/organization/logging_util.h",
       "tabs/organization/metrics.cc",
@@ -1630,11 +1624,7 @@ static_library("ui") {
       "//chrome/browser/apps/link_capturing",
       "//chrome/browser/background:background",
       "//chrome/browser/browsing_data:constants",
-    ]
-    if (enable_glic) {
-      deps += [ "//chrome/browser/contextual_cueing" ]
-    }
-    deps += [
+      "//chrome/browser/contextual_cueing",
       "//chrome/browser/first_party_sets",
       "//chrome/browser/lifetime:termination_notification",
       "//chrome/browser/privacy_sandbox/notice:desktop_entrypoint_handlers_helper",
@@ -1731,17 +1721,23 @@ static_library("ui") {
       "//chrome/browser/ui/webui:webui_util",
       "//chrome/browser/ui/webui/app_management",
       "//chrome/browser/ui/webui/commerce",
+      "//chrome/browser/ui/webui/commerce:impl",
       "//chrome/browser/ui/webui/cr_components/theme_color_picker",
       "//chrome/browser/ui/webui/customize_buttons",
       "//chrome/browser/ui/webui/customize_buttons:impl",
       "//chrome/browser/ui/webui/infobar_internals",
       "//chrome/browser/ui/webui/new_tab_footer",
+      "//chrome/browser/ui/webui/new_tab_footer:impl",
       "//chrome/browser/ui/webui/privacy_sandbox",
       "//chrome/browser/ui/webui/searchbox",
       "//chrome/browser/ui/webui/settings",
+      "//chrome/browser/ui/webui/settings:impl",
       "//chrome/browser/ui/webui/signin",
       "//chrome/browser/ui/webui/signin:login",
+      "//chrome/browser/ui/webui/signin:login_impl",
+      "//chrome/browser/ui/webui/signin:signin_impl",
       "//chrome/browser/ui/webui/signin:signin_utils",
+      "//chrome/browser/ui/webui/signin:signin_utils_impl",
       "//chrome/browser/ui/webui/top_chrome",
       "//chrome/browser/ui/webui/top_chrome:impl",
       "//chrome/browser/ui/webui/util",
@@ -1892,17 +1888,23 @@ static_library("ui") {
       # //c/b/ui/tabs/tab_strip_model.h, which is still part of
       # //c/b/ui.
       "//chrome/browser/ui/tabs:tab_strip_model_observer_impl",
-    ]
-    if (enable_lens_desktop) {
+
       # TODO(crbug.com/382237520): Remove this once NTP code is modularized.
-      public_deps += [ "//chrome/browser/ui/lens:impl" ]
-    }
-    public_deps += [
-      "//chrome/browser/ui/webui/util",
+      "//chrome/browser/ui/lens:impl",
+
+      "//chrome/browser/ui/webui/new_tab_footer:impl",
+      "//chrome/browser/ui/signin:impl",
+      "//chrome/browser/ui/webui/commerce:impl",
+      "//chrome/browser/ui/webui/signin:signin_impl",
+      "//chrome/browser/ui/webui/signin:login_impl",
+      "//chrome/browser/ui/webui/signin:signin_utils_impl",
+      "//chrome/browser/ui/webui/whats_new:impl",
+
       "//chrome/browser/ui:browser_list_impl",
       "//chrome/browser/ui/media_router:impl",
       "//chrome/browser/actor",
       "//chrome/browser/ui/window_sizer:impl",
+      "//chrome/browser/ui/webui/settings:impl",
       "//chrome/browser/ui/search_engine_choice:impl",
       "//chrome/browser/ui/global_media_controls:impl",
       "//chrome/browser/ui/toolbar/cast:impl",
@@ -3001,18 +3003,11 @@ static_library("ui") {
       "//chrome/browser/search/background",
       "//chrome/browser/themes",
       "//chrome/browser/ui/autofill/payments",
+      "//chrome/browser/ui/lens",
+      "//chrome/browser/ui/lens:impl",
       "//chrome/browser/ui/views/privacy_sandbox",
-      "//components/omnibox/browser",
-    ]
-    if (enable_lens_desktop) {
-      deps += [
-        "//chrome/browser/ui/lens",
-        "//chrome/browser/ui/lens:impl",
-        "//components/lens/proto/server:proto",
-        "//third_party/lens_server_proto:lens_overlay_proto",
-      ]
-    }
-    deps += [
+      "//components/lens/proto/server:proto",
+      "//third_party/lens_server_proto:lens_overlay_proto",
       "//third_party/omnibox_proto",
     ]
   }
@@ -3195,14 +3190,8 @@ static_library("ui") {
         "views/profiles/profile_picker_dice_sign_in_provider.h",
         "views/profiles/profile_picker_dice_sign_in_toolbar.cc",
         "views/profiles/profile_picker_dice_sign_in_toolbar.h",
-      ]
-      if (enable_glic) {
-        sources += [
-          "views/profiles/profile_picker_glic_flow_controller.cc",
-          "views/profiles/profile_picker_glic_flow_controller.h",
-        ]
-      }
-      sources += [
+        "views/profiles/profile_picker_glic_flow_controller.cc",
+        "views/profiles/profile_picker_glic_flow_controller.h",
         "webui/signin/batch_upload_handler.cc",
         "webui/signin/batch_upload_handler.h",
         "webui/signin/batch_upload_ui.cc",

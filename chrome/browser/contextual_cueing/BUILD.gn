@@ -5,8 +5,7 @@
 import("//chrome/common/features.gni")
 import("//pdf/features.gni")
 
-if (enable_glic) {
-  source_set("contextual_cueing") {
+source_set("contextual_cueing") {
   sources = [
     "contextual_cueing_enums.h",
     "contextual_cueing_features.h",
@@ -56,16 +55,6 @@ source_set("impl") {
   }
   if (enable_pdf) {
     deps += [ "//components/pdf/browser" ]
-  }
-}
-} else {
-  source_set("contextual_cueing") {
-    sources = []
-    deps = [ "//base" ]
-  }
-  source_set("impl") {
-    sources = []
-    deps = [ ":contextual_cueing" ]
   }
 }
 

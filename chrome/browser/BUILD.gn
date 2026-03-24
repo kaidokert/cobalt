@@ -2,8 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-assert(!is_cobalt, "chrome/browser/BUILD.gn should not be included for Cobalt")
-
 import("//base/allocator/allocator.gni")
 import("//build/buildflag_header.gni")
 import("//build/config/buildflags_paint_preview.gni")
@@ -3683,16 +3681,10 @@ static_library("browser") {
       "component_updater/soda_language_pack_component_installer.h",
       "component_updater/zxcvbn_data_component_installer.cc",
       "component_updater/zxcvbn_data_component_installer.h",
-    ]
-    if (enable_glic) {
-      sources += [
-        "contextual_cueing/contextual_cueing_helper.cc",
-        "contextual_cueing/contextual_cueing_service.cc",
-        "contextual_cueing/contextual_cueing_service.h",
-        "contextual_cueing/contextual_cueing_service_factory.cc",
-      ]
-    }
-    sources += [
+      "contextual_cueing/contextual_cueing_helper.cc",
+      "contextual_cueing/contextual_cueing_service.cc",
+      "contextual_cueing/contextual_cueing_service.h",
+      "contextual_cueing/contextual_cueing_service_factory.cc",
       "data_sharing/desktop/data_sharing_conversion_utils.cc",
       "data_sharing/desktop/data_sharing_conversion_utils.h",
       "data_sharing/desktop/data_sharing_sdk_delegate_desktop.cc",
@@ -4344,14 +4336,8 @@ static_library("browser") {
       "//chrome/browser/actor",
       "//chrome/browser/apps/app_service",
       "//chrome/browser/apps/link_capturing",
-    ]
-    if (enable_glic) {
-      deps += [
-        "//chrome/browser/contextual_cueing",
-        "//chrome/browser/contextual_cueing:impl",
-      ]
-    }
-    deps += [
+      "//chrome/browser/contextual_cueing",
+      "//chrome/browser/contextual_cueing:impl",
       "//chrome/browser/error_reporting",
       "//chrome/browser/feedback:feedback_enum",
       "//chrome/browser/hid",

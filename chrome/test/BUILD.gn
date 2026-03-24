@@ -118,7 +118,6 @@ if (is_android) {
   }
 }
 
-if (!is_cobalt) {
 static_library("chrome_test_launcher") {
   testonly = true
   sources = [
@@ -142,11 +141,9 @@ static_library("chrome_test_launcher") {
     ]
   }
 }
-}
 
 # Use a static library here because many test binaries depend on this but don't
 # require many files from it. This makes linking more efficient.
-if (!is_cobalt) {
 static_library("test_support") {
   defines = []
   deps = [
@@ -1190,7 +1187,6 @@ static_library("test_support") {
     deps += [ "//components/safe_browsing/content/renderer/phishing_classifier:unit_tests_support" ]
   }
 }
-} # if (!is_cobalt)
 
 if (is_android) {
   template("telemetry_gpu_integration_test_android_template") {
@@ -1340,7 +1336,6 @@ if (is_chromeos && is_chromeos_device) {
 }
 
 # Tests that are included in both browser_tests and android_browsertests.
-if (!is_cobalt) {
 source_set("platform_browser_tests") {
   testonly = true
 
@@ -1644,7 +1639,6 @@ source_set("platform_browser_tests") {
       ]
     }
   }
-}
 }
 
 if (is_android) {
@@ -2139,7 +2133,7 @@ static_library("browser_tests_runner") {
   }
 }
 
-if (!is_android && !is_cobalt) {
+if (!is_android) {
   static_library("webrtc_browser_tests_base") {
     testonly = true
 
@@ -2156,9 +2150,7 @@ if (!is_android && !is_cobalt) {
       "//chrome/browser/ui/tabs:tab_strip",
     ]
   }
-}
 
-if (!is_cobalt) {
   test("browser_tests") {
     use_xvfb = use_xvfb_in_this_config
 
@@ -5709,7 +5701,7 @@ if (!is_cobalt) {
       deps += [ "//ui/webui/resources:code_cache_resources" ]
     }
   }
-} # if (!is_cobalt)
+}
 
 if (is_linux || is_chromeos || is_mac || is_win || is_android) {
   import("//tools/binary_size/sizes.gni")
@@ -6034,7 +6026,6 @@ mojom("test_interfaces") {
   sources = [ "mojom/echo.test-mojom" ]
 }
 
-if (!is_cobalt) {
 test("unit_tests") {
   use_xvfb = use_xvfb_in_this_config
 
@@ -10446,7 +10437,6 @@ test("unit_tests") {
   }
 }
 
-if (!is_cobalt) {
 static_library("test_support_unit") {
   testonly = true
   sources = [ "base/run_all_unittests.cc" ]
@@ -10503,7 +10493,7 @@ static_library("test_support_unit") {
   }
 }
 
-if (!is_android && !is_cobalt) {
+if (!is_android) {
   static_library("test_support_ui") {
     defines = []
     testonly = true
@@ -10838,7 +10828,6 @@ if (!is_android && !is_cobalt) {
       deps += [ "//ui/ozone" ]
     }
   }
-}
 
   proto_library("test_proto") {
     sources = [ "../common/safe_browsing/ipc_protobuf_message_test.proto" ]
@@ -10908,7 +10897,7 @@ if (!is_android && !is_cobalt) {
 # Interactive UI test target can't run on ChromeOS device. See
 # //docs/testing/chromeos_integration for how to create an integration
 # test that works on ChromeOS VM/Device.
-if (!is_android && !is_chromeos_device && !is_cobalt) {
+if (!is_android && !is_chromeos_device) {
   test("interactive_ui_tests") {
     use_xvfb = use_xvfb_in_this_config
 
@@ -11883,7 +11872,6 @@ if (!is_android && !is_chromeos_device && !is_cobalt) {
   }
 }
 
-if (!is_cobalt) {
 test("chrome_app_unittests") {
   sources = [ "../app/resources/resources_unittest.cc" ]
   deps = [
@@ -11902,7 +11890,6 @@ test("chrome_app_unittests") {
   if (is_android) {
     sources += [ "../app/android/chrome_main_delegate_android_unittest.cc" ]
   }
-}
 }
 
 if (!is_android) {
@@ -11960,7 +11947,6 @@ if (is_android) {
 
 # For Android, this target has to be built along with the
 # sync_integration_test_support_java target from the test target dependencies.
-if (!is_cobalt) {
 source_set("sync_integration_test_support") {
   testonly = true
   sources = [
@@ -12184,7 +12170,6 @@ source_set("sync_integration_test_support") {
     ]
   }
 }
-}
 
 if (!is_android) {
   test("sync_integration_tests") {
@@ -12196,7 +12181,6 @@ if (!is_android) {
     }
   }
 
-if (!is_cobalt) {
   test("sync_performance_tests") {
     sources = [
       "../browser/sync/test/integration/performance/autofill_sync_perf_test.cc",
@@ -12255,7 +12239,6 @@ if (!is_cobalt) {
     # This target should not require the Chrome executable to run.
     assert_no_deps = [ "//chrome" ]
   }
-}
 
   # Executable to measure time to load libraries.
   test("load_library_perf_tests") {
@@ -12291,7 +12274,7 @@ if (!is_cobalt) {
     assert_no_deps = [ "//chrome" ]
   }
 
-if (!is_cobalt) {
+  # Tests autofill on captured websites
   test("captured_sites_interactive_tests") {
     use_xvfb = use_xvfb_in_this_config
 
@@ -12395,7 +12378,6 @@ if (!is_cobalt) {
       ]
     }
   }
-}
 
   script_test("telemetry_unittests") {
     script = "//testing/scripts/run_telemetry_as_googletest.py"
@@ -12573,7 +12555,6 @@ if (!is_android) {
 # This should only contain files that are useful if enable_vr = false. For
 # tests/infrastructure that require enable_vr = true, see
 # //chrome/browser/vr:xr_browser_tests_vr_required.
-if (!is_cobalt) {
 source_set("xr_browser_tests_common") {
   testonly = true
   defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
@@ -12627,7 +12608,6 @@ source_set("xr_browser_tests_common") {
     data_deps = [ "//chrome:packed_resources" ]
   }
 }
-}
 
 if (is_linux || is_mac || is_win) {
   script_test("variations_smoke_tests") {
@@ -12678,6 +12658,5 @@ if (!is_android && enable_print_preview) {
       "//components/printing/common:mojo_interfaces",
       "//content/public/browser",
     ]
-  }
   }
 }
