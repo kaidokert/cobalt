@@ -5,7 +5,7 @@
 import("//build/config/features.gni")
 import("//components/supervised_user/buildflags.gni")
 
-assert(!is_cobalt, "components/browser_sync should not be included for Cobalt")
+assert(!is_starboard, "components/browser_sync should not be included for Cobalt")
 
 static_library("browser_sync") {
   sources = [

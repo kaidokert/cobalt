@@ -6,7 +6,7 @@ import("//build/config/features.gni")
 
 assert(use_blink)
 
-assert(!is_cobalt, "components/webapps should not be included for Cobalt")
+assert(!is_starboard, "components/webapps should not be included for Cobalt")
 
 
 # This source set should contain only types and constants and no dependencies,

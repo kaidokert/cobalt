@@ -264,21 +264,21 @@ group("gn_all") {
       }
     }
 
-    if (!is_ios && !is_cobalt) {
-      deps += [
-        ":chromedriver_group",
-        "//components:components_browsertests",
-        "//ipc:ipc_tests",
-        "//net:net_perftests",
-        "//ui/events:events_unittests",
-        "//url/ipc:url_ipc_unittests",
-      ]
-    } else if (!is_ios) {
+    if (!is_ios) {
       deps += [
         "//ipc:ipc_tests",
         "//ui/events:events_unittests",
         "//url/ipc:url_ipc_unittests",
       ]
+      if (!is_starboard) {
+        deps += [ ":chromedriver_group" ]
+      }
+      if (!is_cobalt) {
+        deps += [
+          "//components:components_browsertests",
+          "//net:net_perftests",
+        ]
+      }
     }
 
     if (is_chromeos && !is_cobalt) {
@@ -1135,7 +1135,7 @@ if (is_chromeos) {
   }
 }
 
-if (use_blink && !is_cronet_build && !is_cobalt) {
+if (use_blink && !is_cronet_build && !is_starboard) {
   group("chromedriver_group") {
     testonly = true
 

@@ -56,7 +56,7 @@ source_set("test_support") {
   ]
 }
 
-if (!is_cobalt) {
+if (!is_starboard) {
 source_set("unit_tests") {
   testonly = true
 

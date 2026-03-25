@@ -3,7 +3,7 @@
 # found in the LICENSE file.
 
 
-assert(!is_cobalt, "components/payments should not be included for Cobalt")
+assert(!is_starboard, "components/payments should not be included for Cobalt")
 
 
 static_library("content") {

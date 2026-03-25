@@ -4,7 +4,7 @@
 
 import("//testing/test.gni")
 
-assert(!is_cobalt, "components/metrics/demographics should not be included for Cobalt")
+assert(!is_starboard, "components/metrics/demographics should not be included for Cobalt")
 
 
 static_library("demographics") {

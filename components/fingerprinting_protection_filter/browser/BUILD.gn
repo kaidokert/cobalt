@@ -5,7 +5,7 @@
 import("//build/config/features.gni")
 
 
-assert(!is_cobalt, "components/fingerprinting should not be included for Cobalt")
+assert(!is_starboard, "components/fingerprinting should not be included for Cobalt")
 
 # For this component iOS is explicitly not supported.
 if (use_blink) {

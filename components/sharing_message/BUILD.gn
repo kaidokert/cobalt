@@ -9,7 +9,7 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
-assert(!is_cobalt, "components/sharing_message should not be included for Cobalt")
+assert(!is_starboard, "components/sharing_message should not be included for Cobalt")
 
 buildflag_header("buildflags") {
   header = "buildflags.h"

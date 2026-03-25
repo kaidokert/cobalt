@@ -4,7 +4,7 @@
 
 import("//third_party/protobuf/proto_library.gni")
 
-assert(!is_cobalt, "components/themes should not be included for Cobalt")
+assert(!is_starboard, "components/themes should not be included for Cobalt")
 
 source_set("themes") {
   public = [

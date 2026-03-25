@@ -5,7 +5,7 @@ if (is_android) {
 }
 
 
-assert(!is_cobalt, "components/plus_addresses should not be included for Cobalt")
+assert(!is_starboard, "components/plus_addresses should not be included for Cobalt")
 
 proto_library("proto") {
   proto_in_dir = "//"

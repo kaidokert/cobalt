@@ -72,7 +72,7 @@ if (is_ios) {
   }
 }
 
-if (!is_cobalt) {
+if (!is_starboard) {
 disallowed_extension_deps_ = [
   # Components should largely not depend on //extensions. Since // extensions
   # is not a component target and is linked with //chrome, depending on most
@@ -96,13 +96,13 @@ disallowed_extension_deps_ = [
   "//extensions/components/*",
   "//extensions/strings/*",
 ]
-} # if (!is_cobalt)
+} # if (!is_starboard)
 
 # To add a unit test to this target, make a "unit_tests" source_set in your
 # component(it's important to use a source_set instead of a static library or
 # no tests will run) and add a reference here.You can add more than one unit
 # test target if convenient.
-if (!is_cobalt) {
+if (!is_starboard) {
 test("components_unittests") {
   use_xvfb = use_xvfb_in_this_config
 
@@ -231,7 +231,7 @@ test("components_unittests") {
     "//components/grpc_support/test:unit_tests",
     "//components/heap_profiling/in_process:unit_tests",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [
       "//components/history/core/browser:unit_tests",
       "//components/history/metrics:unit_tests",
@@ -250,7 +250,7 @@ test("components_unittests") {
     "//components/lookalikes/core:unit_tests",
     "//components/memory_pressure:unit_tests",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/metrics:unit_tests" ]
   }
   deps += [
@@ -309,7 +309,7 @@ test("components_unittests") {
     "//components/translate/core/common:unit_tests",
     "//components/translate/core/language_detection:unit_tests",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/ukm:unit_tests" ]
   }
   deps += [
@@ -330,11 +330,11 @@ test("components_unittests") {
     "//components/webui/flags:unit_tests",
   ]
 
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/dom_distiller/core:unit_tests" ]
   }
 
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
     "//components/optimization_guide/core:unit_tests",
     "//components/unified_consent:unit_tests",
@@ -456,7 +456,7 @@ test("components_unittests") {
       "//components/update_client:unit_tests",
       "//components/visited_url_ranking/internal:unit_tests",
     ]
-    if(!is_cobalt) {
+    if(!is_starboard) {
       deps += [
       "//components/sync_sessions:unit_tests",
       "//components/browser_sync:unit_tests",
@@ -469,7 +469,7 @@ test("components_unittests") {
     deps += [
       "//components/browsing_data/content:unit_tests",
     ]
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [
         "//components/autofill/core/common/mojom:unit_tests",
         "//components/browsing_topics:unit_tests",
@@ -486,7 +486,7 @@ test("components_unittests") {
         "//components/continuous_search/common:unit_tests",
       ]
     }
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [ "//components/custom_handlers:unit_tests" ]
     }
     deps += [
@@ -495,10 +495,10 @@ test("components_unittests") {
       "//components/discardable_memory/common:unit_tests",
       "//components/discardable_memory/service:unit_tests",
     ]
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [ "//components/dom_distiller/content/browser:unit_tests" ]
     }
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [
         "//components/domain_reliability:unit_tests",
         "//components/drive:unit_tests",
@@ -522,7 +522,7 @@ test("components_unittests") {
         "//components/link_header_util:unit_tests",
       ]
     }
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [
         "//components/media_device_salt:unit_tests",
         "//components/media_effects:unit_tests",
@@ -541,7 +541,7 @@ test("components_unittests") {
         "//components/page_load_metrics/renderer:unit_tests",
       ]
     }
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [
         "//components/paint_preview/browser:unit_tests",
         "//components/paint_preview/common:unit_tests",
@@ -579,7 +579,7 @@ test("components_unittests") {
         "//components/webrtc_logging/common:unit_tests",
       ]
     }
-    if(!is_cobalt) {
+    if(!is_starboard) {
       deps += [
       "//components/commerce/content/browser:unit_tests",
       "//components/autofill/content/browser:unit_tests",
@@ -658,7 +658,7 @@ test("components_unittests") {
       "//components/spellcheck/browser:unit_tests",
       "//components/spellcheck/renderer:unit_tests",
     ]
-    if(!is_cobalt) {
+    if(!is_starboard) {
       deps += [
       "//components/page_info:unit_tests",
       "//components/fingerprinting_protection_filter/browser:unit_tests",
@@ -792,7 +792,7 @@ test("components_unittests") {
     deps += [ "//components/guest_view/browser:unit_tests" ]
   }
 
-  if (!is_android && !is_ios && !is_fuchsia && !is_cobalt) {
+  if (!is_android && !is_ios && !is_fuchsia && !is_starboard) {
     deps += [ "//components/autofill_ai/core/browser:unit_tests" ]
   }
 
@@ -801,7 +801,7 @@ test("components_unittests") {
     deps += [ "//components/feedback/redaction_tool:unit_tests" ]
   }
 
-  if (!is_android && !is_cobalt) {
+  if (!is_android && !is_starboard) {
     deps += [
       "//components/commerce/core:account_checker_unittests",
       "//components/commerce/core:commerce_heuristics_data_unittests",
@@ -875,7 +875,7 @@ test("components_unittests") {
     ]
   }
 
-  if (safe_browsing_mode != 0 && !is_ios && !is_cobalt) {
+  if (safe_browsing_mode != 0 && !is_ios && !is_starboard) {
     deps += [
       # TODO(chromium: 1169835) components / reporting / storage / resources: unit_tests
       # can't be run on iOS until they are updated.
@@ -1012,7 +1012,7 @@ test("components_unittests") {
     "TriggerRegistrationTest.Parses",
   ]
 }
-} # if (!is_cobalt)
+} # if (!is_starboard)
 
 repack("components_tests_pak") {
   sources = [
@@ -1038,7 +1038,7 @@ repack("components_tests_pak") {
     "//components/resources",
     "//components/strings",
   ]
-  if(!is_cobalt ) {
+  if(!is_starboard ) {
     deps += [
     "//components/autofill/core/browser:autofill_address_rewriter_resources",
     ]
@@ -1094,7 +1094,7 @@ if (is_android) {
   }
 }
 
-if (use_blink && !is_cobalt) {
+if (use_blink && !is_starboard) {
   test("components_browsertests") {
     use_xvfb = use_xvfb_in_this_config
 
@@ -1186,7 +1186,7 @@ if (use_blink && !is_cobalt) {
       "//ui/native_theme:native_theme",
       "//url",
     ]
-    if(!is_cobalt) {
+    if(!is_starboard) {
       deps += [
       "//components/password_manager/content/browser",
         "//components/autofill/core/browser",
@@ -1338,7 +1338,7 @@ if (use_blink && !is_cobalt) {
     }
   }
 
-  if (!is_cobalt) {
+  if (!is_starboard) {
   test("components_perftests") {
     sources = [
       "attribution_reporting/aggregatable_utils_perftest.cc",
@@ -1368,15 +1368,10 @@ if (use_blink && !is_cobalt) {
       "//testing/perf",
       "//third_party/google_benchmark:google_benchmark",
       "//url",
-    ]
-    if(!is_cobalt) {
-      deps += [
-        "//components/omnibox/browser",
+      "//components/omnibox/browser",
       "//components/autofill/content/browser",
-        "//components/omnibox/browser:test_support",
-      ]
-
-    }
+      "//components/omnibox/browser:test_support",
+    ]
 
     data_deps = [
       ":components_tests_pak",

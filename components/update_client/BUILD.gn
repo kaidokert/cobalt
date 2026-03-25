@@ -248,7 +248,7 @@ source_set("test_support") {
     ":unit_tests",
     "//components/component_updater:unit_tests",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     visibility += [ "//chrome/test:test_support" ]
   }
   sources = [

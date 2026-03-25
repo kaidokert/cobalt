@@ -4,7 +4,7 @@
 
 import("//build/rust/rust_static_library.gni")
 
-assert(!is_cobalt, "components/user_data_import should not be included for Cobalt")
+assert(!is_starboard, "components/user_data_import should not be included for Cobalt")
 
 source_set("safari_data_importer") {
   sources = [

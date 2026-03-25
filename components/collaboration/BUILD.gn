@@ -4,7 +4,7 @@
 
 import("//build/buildflag_header.gni")
 
-assert(!is_cobalt, "components/collabortation should not be included for Cobalt")
+assert(!is_starboard, "components/collabortation should not be included for Cobalt")
 
 if (is_android) {
   import("//build/config/android/config.gni")

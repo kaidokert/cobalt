@@ -8,7 +8,7 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
-assert(!is_cobalt, "components/signin should not be included for Cobalt")
+assert(!is_starboard, "components/signin should not be included for Cobalt")
 
 
 # This target contains code that is used by clients of //components/signin.

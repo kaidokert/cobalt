@@ -8,7 +8,7 @@ proto_library("autofill_shared_storage_proto") {
   sources = [ "autofill_shared_storage.proto" ]
 }
 
-assert(!is_cobalt, "components/autofill_browser should not be included for Cobalt")
+assert(!is_starboard, "components/autofill_browser should not be included for Cobalt")
 
 
 static_library("browser") {
