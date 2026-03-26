@@ -367,7 +367,7 @@ if (enable_extensions) {
       "//base/test:test_support",
       "//build:chromeos_buildflags",
     ]
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [
         "//chrome/browser",
         "//chrome/common/extensions/api",

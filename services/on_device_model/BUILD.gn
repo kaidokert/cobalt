@@ -21,7 +21,7 @@ component("on_device_model_service") {
     "//third_party/libphonenumber",
     "//third_party/utf",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
     "//components/optimization_guide/core:features",
     ]
@@ -48,7 +48,7 @@ component("on_device_model_service") {
   if (is_linux || is_chromeos) {
     deps += [ "//gpu/config" ]
   }
-  if (!is_fuchsia && !is_cobalt_hermetic_build) {
+  if (!is_fuchsia && !is_starboard_hermetic_build) {
     deps += [
       "//third_party/dawn/include/dawn:cpp_headers",
       "//third_party/dawn/src/dawn:proc",

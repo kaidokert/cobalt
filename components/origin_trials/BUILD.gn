@@ -84,7 +84,7 @@ source_set("unit_tests") {
     "//third_party/blink/public:test_headers",
     "//url:url",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
     "//components/sync_preferences:test_support",
 

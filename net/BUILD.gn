@@ -133,7 +133,7 @@ net_configs = [
   "//build/config/compiler:wexit_time_destructors",
 ]
 
-if (is_linux && !is_cobalt_hermetic_build || is_chromeos) {
+if (is_linux && !is_starboard_hermetic_build || is_chromeos) {
   net_configs += [ "//build/config/linux:libresolv" ]
 }
 
@@ -1336,7 +1336,7 @@ component("net") {
     ]
   }
 
-  if ((is_linux || is_chromeos || is_android) && !is_cobalt_hermetic_build) {
+  if ((is_linux || is_chromeos || is_android) && !is_starboard_hermetic_build) {
     sources += [
       "base/address_map_linux.cc",
       "base/address_map_linux.h",
@@ -1348,7 +1348,7 @@ component("net") {
     ]
   }
 
-  if (is_linux && !is_cobalt_hermetic_build) {
+  if (is_linux && !is_starboard_hermetic_build) {
     sources += [
       "base/address_map_cache_linux.cc",
       "base/address_map_cache_linux.h",
@@ -1485,7 +1485,7 @@ component("net") {
     }
   }
 
-  if ((is_android || is_chromeos || is_linux) && !is_cobalt_hermetic_build) {
+  if ((is_android || is_chromeos || is_linux) && !is_starboard_hermetic_build) {
     sources += [
       "base/network_change_notifier_passive.cc",
       "base/network_change_notifier_passive.h",

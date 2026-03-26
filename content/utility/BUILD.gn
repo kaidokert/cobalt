@@ -43,7 +43,7 @@ source_set("utility") {
     "//base",
     "//build:branding_buildflags",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/optimization_guide/core:features" ]
   }
   deps += [
@@ -113,14 +113,14 @@ source_set("utility") {
     }
   }
 
-  if (is_linux && !is_cobalt_hermetic_build || is_chromeos) {
+  if (is_linux && !is_starboard_hermetic_build || is_chromeos) {
     deps += [
       "//content/utility/speech:speech_recognition_sandbox_hook",
       "//media/gpu/sandbox",
       "//media/mojo/services",
       "//services/network:network_sandbox_hook",
     ]
-    if (use_linux_video_acceleration && !is_cobalt_hermetic_build) {
+    if (use_linux_video_acceleration && !is_starboard_hermetic_build) {
       deps += [
         "//gpu/config",
         "//third_party/angle:angle_gpu_info_util",
@@ -150,7 +150,7 @@ source_set("utility") {
     deps += [ "//services/proxy_resolver:lib" ]
   }
 
-  if (enable_screen_ai_service && (is_linux && !is_cobalt_hermetic_build || is_chromeos)) {
+  if (enable_screen_ai_service && (is_linux && !is_starboard_hermetic_build || is_chromeos)) {
     deps += [ "//services/screen_ai:screen_ai_sandbox_hook" ]
   }
 

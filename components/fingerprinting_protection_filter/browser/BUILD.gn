@@ -70,7 +70,7 @@ if (use_blink) {
       "//components/fingerprinting_protection_filter/common:prefs",
       "//components/privacy_sandbox:tracking_protection_settings",
     ]
-    if(!is_cobalt) {
+    if(!is_starboard) {
       deps += [
         "//components/sync_preferences:test_support",
       ]

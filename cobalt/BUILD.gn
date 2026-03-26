@@ -55,7 +55,7 @@ group("gn_all") {
     deps += [ "android:cobalt_apk" ]
   } else if (is_ios && target_platform == "tvos") {
     deps += [ ":cobalt" ]
-  } else if (!is_cobalt_hermetic_build) {
+  } else if (!is_starboard_hermetic_build) {
     deps += [ ":strip_cobalt_binary" ]
   }
   if (is_cobalt_hermetic_build) {
@@ -66,7 +66,7 @@ group("gn_all") {
       "//starboard/loader_app:loader_app($starboard_toolchain)",
     ]
   }
-  if (is_starboard && build_updater_sandbox && !is_cobalt) {
+  if (is_starboard && build_updater_sandbox && !is_starboard) {
     deps += [ "//chrome/updater/cobalt:updater_sandbox" ]
   }
   if (use_crashpad) {
@@ -177,7 +177,7 @@ if (is_ios && target_platform == "tvos") {
     ]
   }
 
-  if (!is_cobalt_hermetic_build) {
+  if (!is_starboard_hermetic_build) {
     strip_binary("strip_cobalt_binary") {
       binary_input = "$root_out_dir/cobalt"
       deps = [ ":cobalt" ]

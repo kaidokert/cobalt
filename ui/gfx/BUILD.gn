@@ -176,7 +176,7 @@ component("gfx") {
       "android/view_configuration.h",
     ]
   }
-  if (is_linux && !is_cobalt_hermetic_build || is_chromeos) {
+  if (is_linux && !is_starboard_hermetic_build || is_chromeos) {
     sources += [
       "font_fallback_linux.cc",
       "font_fallback_linux.h",
@@ -426,7 +426,7 @@ component("gfx") {
   if (is_linux) {
     deps += [ "//ui/linux:linux_ui" ]
   }
-  if (is_linux && !is_cobalt_hermetic_build || is_chromeos) {
+  if (is_linux && !is_starboard_hermetic_build || is_chromeos) {
     deps += [ "//third_party/fontconfig" ]
   }
 

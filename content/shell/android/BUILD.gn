@@ -30,7 +30,7 @@ shared_library_with_jni("libcontent_shell_content_view") {
     "//skia",
   ]
 
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [
       "//components/crash/content/browser",
     ]
@@ -208,7 +208,7 @@ template("content_shell_apk_tmpl") {
       "//ui/android:ui_java",
     ]
 
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [
         "//components/crash/android:java",
         "//components/crash/core/app:chrome_crashpad_handler_named_as_so",

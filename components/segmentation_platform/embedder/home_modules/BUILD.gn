@@ -60,7 +60,7 @@ static_library("home_modules") {
     ":constants",
     "//base",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/commerce/core:feature_list" ]
   }
   deps += [
@@ -69,7 +69,7 @@ static_library("home_modules") {
     "//components/segmentation_platform/embedder/home_modules/tips_manager:signal_constants",
     "//components/segmentation_platform/internal",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/send_tab_to_self" ]
   }
   deps += [
@@ -127,7 +127,7 @@ source_set("unit_tests") {
     "//base",
     "//base/test:test_support",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/commerce/core:feature_list" ]
   }
   deps += [
@@ -139,7 +139,7 @@ source_set("unit_tests") {
     "//components/segmentation_platform/public",
     "//components/segmentation_platform/public:test_support",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/send_tab_to_self" ]
   }
   deps += [

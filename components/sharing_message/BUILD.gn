@@ -102,7 +102,7 @@ source_set("sharing_message") {
     "//third_party/re2",
     "//ui/base",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
 
   }
 }

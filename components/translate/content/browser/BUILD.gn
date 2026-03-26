@@ -29,7 +29,7 @@ static_library("browser") {
     "//components/language/core/browser",
     "//components/language_detection/core/browser:language_detection_model_service",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [
       "//components/optimization_guide/content/browser",
       "//components/optimization_guide/core",

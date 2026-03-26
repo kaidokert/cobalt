@@ -16,8 +16,8 @@ import("//starboard/build/config/starboard_target_type.gni")
 import("//starboard/contrib/cast/cast.gni")
 import("//testing/test.gni")
 
-# TODO: b/389791129 - Evaluate and cleanup targets in if(!is_cobalt) code block.
-if (!is_cobalt) {
+# TODO: b/389791129 - Evaluate and cleanup targets in if(!is_starboard) code block.
+if (!is_starboard) {
   group("gn_all") {
     testonly = true
 

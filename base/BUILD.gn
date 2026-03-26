@@ -1072,7 +1072,7 @@ component("base") {
     # Used by metrics/crc32, except on NaCl builds.
     deps += [ "//third_party/zlib" ]
 
-    if (!is_cobalt || !_should_build_for_platform) {
+    if (!is_starboard || !_should_build_for_platform) {
     # NaCl does not support Rust.
     deps += [
       ":rust_logger",
@@ -1114,7 +1114,7 @@ component("base") {
     "//third_party/abseil-cpp:absl",
   ]
 
-  if (!is_nacl && (!is_cobalt || !_should_build_for_platform)) {
+  if (!is_nacl && (!is_starboard || !_should_build_for_platform)) {
     sources += [
       "containers/span_rust.h",
       "strings/string_view_rust.h",
@@ -1128,7 +1128,7 @@ component("base") {
   # Needed for <atomic> if using newer C++ library than sysroot, except if
   # building inside the cros_sdk environment - use host_toolchain as a
   # more robust check for this.
-  if (!use_sysroot && (is_android || is_chromeos || (is_linux && !is_cobalt_hermetic_build && !is_castos)) &&
+  if (!use_sysroot && (is_android || is_chromeos || (is_linux && !is_starboard_hermetic_build && !is_castos)) &&
       host_toolchain != "//build/toolchain/cros:host") {
     libs += [ "atomic" ]
   }
@@ -2779,7 +2779,7 @@ buildflag_header("debugging_buildflags") {
 
   # TODO(crbug.com/40258939): Try and enable these checks on Android too.
   enable_commandline_sequence_checks =
-      (is_debug || dcheck_always_on) && !is_android && !is_cobalt
+      (is_debug || dcheck_always_on) && !is_android && !is_starboard
 
   if (enable_stack_trace_line_numbers) {
     assert(
@@ -2839,7 +2839,7 @@ buildflag_header("protected_memory_buildflags") {
   header_dir = "base/memory"
 
   protected_memory_enabled = !is_component_build && is_clang &&
-                             (is_win || is_linux || is_android || is_mac) && !is_cobalt_hermetic_build
+                             (is_win || is_linux || is_android || is_mac) && !is_starboard_hermetic_build
 
   flags = [ "PROTECTED_MEMORY_ENABLED=$protected_memory_enabled" ]
 }
@@ -3902,7 +3902,7 @@ test("base_unittests") {
     deps += [ "allocator/partition_allocator/src/partition_alloc:unittests" ]
   }
 
-  if (!is_nacl && (!is_cobalt || !_should_build_for_platform)) {
+  if (!is_nacl && (!is_starboard || !_should_build_for_platform)) {
     deps += [ "//build/rust:cxx_cppdeps" ]
   }
 
@@ -4096,7 +4096,7 @@ test("base_unittests") {
     ]
   }
 
-  if (enable_base_tracing && !is_cobalt_hermetic_build) {
+  if (enable_base_tracing && !is_starboard_hermetic_build) {
     sources += [ "test/test_trace_processor_example_unittest.cc" ]
   }
 
@@ -4315,7 +4315,7 @@ test("base_unittests") {
     deps += [ ":base_profiler_test_support_library" ]
   }
 
-  if (is_fuchsia || (is_linux && !is_cobalt_hermetic_build) || is_chromeos) {
+  if (is_fuchsia || (is_linux && !is_starboard_hermetic_build) || is_chromeos) {
     sources += [
       "debug/elf_reader_unittest.cc",
       "debug/test_elf_image_builder.cc",

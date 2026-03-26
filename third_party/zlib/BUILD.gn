@@ -142,7 +142,7 @@ if (use_arm_neon_optimizations) {
     # !_is_platform_defined_toolchain toolchains but it turns out that some of
     # these, such as //build/toolchain/linux:clang_arm, require some of these
     # defines even though they use ARMv7. We should address this eventually.
-    if (!is_cobalt || !_is_platform_defined_toolchain ||
+    if (!is_starboard || !_is_platform_defined_toolchain ||
         current_cpu == "arm64" || arm_version >= 8) {
       defines = [ "CRC32_ARMV8_CRC32" ]
       if (is_android) {
@@ -172,7 +172,7 @@ if (use_arm_neon_optimizations) {
     # toolchain compilers, probably because of the GCC version. This
     # customization is ported forward from c25.
     if (!is_win && !is_clang &&
-        (!is_cobalt || !_is_platform_defined_toolchain)) {
+        (!is_starboard || !_is_platform_defined_toolchain)) {
       assert(!use_thin_lto,
              "ThinLTO fails mixing different module-level targets")
       if (current_cpu == "arm64") {

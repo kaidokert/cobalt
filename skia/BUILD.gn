@@ -452,7 +452,7 @@ component("skia") {
     sources += skia_ports_fontmgr_coretext_sources
   }
 
-  if (is_linux && !is_cobalt_hermetic_build || is_chromeos) {
+  if (is_linux && !is_starboard_hermetic_build || is_chromeos) {
     public += skia_ports_fci_public
     sources += skia_ports_fci_sources
   }
@@ -538,7 +538,7 @@ component("skia") {
     ]
   }
 
-  if (is_linux && !is_cobalt_hermetic_build || is_chromeos) {
+  if (is_linux && !is_starboard_hermetic_build || is_chromeos) {
     deps += [
       "//third_party/expat",
       "//third_party/fontconfig",

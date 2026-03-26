@@ -1103,7 +1103,7 @@ component("base") {
   # Needed for <atomic> if using newer C++ library than sysroot, except if
   # building inside the cros_sdk environment - use host_toolchain as a
   # more robust check for this.
-  if (!use_sysroot && (is_android || is_chromeos || (is_linux && !is_cobalt_hermetic_build && !is_castos)) &&
+  if (!use_sysroot && (is_android || is_chromeos || (is_linux && !is_starboard_hermetic_build && !is_castos)) &&
       host_toolchain != "//build/toolchain/cros:host") {
     libs += [ "atomic" ]
   }
@@ -2542,7 +2542,7 @@ buildflag_header("debugging_buildflags") {
 
   # TODO(crbug.com/1420774): Try and enable these checks on Android too.
   enable_commandline_sequence_checks =
-      (is_debug || dcheck_always_on) && !is_android && !is_cobalt
+      (is_debug || dcheck_always_on) && !is_android && !is_starboard
 
   flags = [
     "DCHECK_IS_CONFIGURABLE=$dcheck_is_configurable",
@@ -3980,7 +3980,7 @@ test("base_unittests") {
     }
   }
 
-  if (is_fuchsia || (is_linux && !is_cobalt_hermetic_build) || is_chromeos) {
+  if (is_fuchsia || (is_linux && !is_starboard_hermetic_build) || is_chromeos) {
     sources += [
       "debug/elf_reader_unittest.cc",
       "debug/test_elf_image_builder.cc",

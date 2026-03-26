@@ -371,7 +371,7 @@ static_library("browser") {
     "//components/favicon/core",
     "//components/favicon_base",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [
       "//components/history_clusters/core",
       "//components/history_embeddings",
@@ -768,7 +768,7 @@ static_library("test_support") {
     "//components/history/core/browser",
     "//components/history/core/test",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/history_embeddings" ]
   }
   deps += [
@@ -929,7 +929,7 @@ source_set("unit_tests") {
     "//components/favicon/core/test:test_support",
     "//components/history/core/test",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [
       "//components/history_embeddings",
       "//components/history_embeddings:test_support",
@@ -938,7 +938,7 @@ source_set("unit_tests") {
   deps += [
     "//components/memory_pressure:test_support",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/ntp_tiles:ntp_tiles" ]
   }
   deps += [
@@ -949,7 +949,7 @@ source_set("unit_tests") {
     "//components/optimization_guide/proto:optimization_guide_proto",
     "//components/os_crypt/async/browser",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [
       "//components/passage_embeddings:passage_embeddings",
       "//components/passage_embeddings:test_support",
@@ -1008,7 +1008,7 @@ source_set("unit_tests") {
     deps += [ "//extensions/common:extension_features" ]
   }
 
-  if (use_blink && !is_cobalt) {
+  if (use_blink && !is_starboard) {
     deps += [ "//components/history_clusters/core:test_support" ]
   }
 }

@@ -57,7 +57,7 @@ static_library("webui_examples_lib") {
     "resources/browser:resources",
     "//base",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//chrome/browser/resources/webui_gallery:resources" ]
   }
   deps += [
@@ -141,7 +141,7 @@ repack("pak") {
     ":resources",
     "resources/browser:resources",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//chrome/browser/resources/webui_gallery:resources" ]
   }
   deps += [

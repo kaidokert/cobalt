@@ -29,7 +29,7 @@ source_set("ui") {
     "//ui/base",
     "//ui/gfx",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
       "//components/fingerprinting_protection_filter/browser",
     "//components/site_engagement/content",

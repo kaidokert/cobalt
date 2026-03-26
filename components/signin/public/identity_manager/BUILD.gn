@@ -60,7 +60,7 @@ source_set("identity_manager") {
   deps = [
     "//components/image_fetcher/core",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/plus_addresses:features" ]
   }
   deps += [

@@ -356,7 +356,7 @@ source_set("unit_tests") {
       ":instance_update",
       "//components/services/app_service/public/cpp/shortcut:unit_tests",
     ]
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [ "//chrome/test:test_support" ]
     }
   }

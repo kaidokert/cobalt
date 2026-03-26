@@ -281,7 +281,7 @@ source_set("test_support") {
     "//testing/gtest",
     "//url",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//chrome/test:test_support" ]
   }
 }

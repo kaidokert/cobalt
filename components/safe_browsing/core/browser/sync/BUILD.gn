@@ -23,7 +23,7 @@ source_set("sync") {
     "//components/signin/public/identity_manager",
     "//google_apis",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
     "//components/sync/service",
     ]

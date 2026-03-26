@@ -602,7 +602,7 @@ source_set("browser_sources") {
     "//components/language_detection/content/browser",
     "//components/language_detection/content/common",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/language_detection/core/browser:language_detection_model_service" ]
   }
   deps += [

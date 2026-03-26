@@ -220,7 +220,7 @@ config("default_libs") {
     # This binary needs dynamic linking but gets undefined symbols, which result
     # in symbol lookup errors at runtime, when also linked with pthread.
     libs = [ "dl" ]
-  } else if (is_linux && !is_cobalt_hermetic_build || is_chromeos) {
+  } else if (is_linux && !is_starboard_hermetic_build || is_chromeos) {
     libs = [
       "dl",
       "pthread",

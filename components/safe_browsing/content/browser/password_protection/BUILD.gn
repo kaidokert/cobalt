@@ -53,7 +53,7 @@ source_set("password_protection") {
       "//third_party/protobuf:protobuf_lite",
       "//ui/gfx:color_utils",
     ]
-    if(!is_cobalt) {
+    if(!is_starboard) {
       deps += [
         "//components/password_manager/core/browser:browser",
       ]
@@ -107,7 +107,7 @@ source_set("password_protection_unittest") {
       "//testing/gtest",
       "//third_party/protobuf:protobuf_lite",
     ]
-    if(!is_cobalt) {
+    if(!is_starboard) {
       deps += [
         "//components/sync_preferences:test_support",
 

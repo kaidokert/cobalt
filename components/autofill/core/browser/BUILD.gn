@@ -1201,7 +1201,7 @@ static_library("test_support") {
       "payments/test_internal_authenticator.h",
     ]
 
-    if (!is_cobalt) {
+    if (!is_starboard) {
       public_deps += [ "//components/autofill/content/browser" ]
     }
 
@@ -1570,7 +1570,7 @@ source_set("unit_tests") {
     "//components/os_crypt/async/browser:test_support",
     "//components/password_manager/core/browser/features:password_features",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/plus_addresses" ]
   }
   deps += [

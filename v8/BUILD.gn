@@ -6746,7 +6746,7 @@ v8_component("v8_libbase") {
       "src/base/platform/platform-linux.h",
     ]
 
-    if (!is_cobalt_hermetic_build) {
+    if (!is_starboard_hermetic_build) {
     libs = [
       "dl",
       "rt",

@@ -154,7 +154,7 @@ source_set("verdict_cache_manager_unittest") {
     "//components/safe_browsing/core/common/proto:safebrowsingv5_proto",
     "//testing/gtest",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
     "//components/sync_preferences:test_support",
     ]

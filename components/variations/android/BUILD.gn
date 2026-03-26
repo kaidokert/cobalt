@@ -38,7 +38,7 @@ android_library("variations_java") {
     "java/src/org/chromium/components/variations/firstrun/VariationsSeedBridge.java",
   ]
 
-  if (!is_cobalt) {
+  if (!is_starboard) {
     sources += [
       "java/src/org/chromium/components/variations/firstrun/VariationsSeedFetcher.java",
     ]

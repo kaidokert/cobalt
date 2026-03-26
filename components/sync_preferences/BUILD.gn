@@ -27,7 +27,7 @@ static_library("sync_preferences") {
   deps = [
     "//base",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/metrics/demographics" ]
   }
   deps += [
@@ -58,16 +58,16 @@ source_set("common_syncable_prefs_database") {
     "//components/language/core/browser",
     "//components/metrics",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [
       "//components/commerce/core:pref_names",
       "//components/dom_distiller/core",
     ]
   }
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/metrics/demographics" ]
   }
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/ntp_tiles" ]
   }
   deps += [
@@ -75,7 +75,7 @@ source_set("common_syncable_prefs_database") {
     "//components/payments/core",
     "//components/password_manager/core/common",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [
       "//components/plus_addresses:prefs",
       "//components/saved_tab_groups/public",

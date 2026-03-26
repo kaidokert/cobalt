@@ -19,7 +19,7 @@ import("//build/config/ui.gni")
 import("//build/gn_logs.gni")
 import("//build/toolchain/rbe.gni")
 import("//build/util/generate_wrapper.gni")
-if (!is_cobalt) {
+if (!is_starboard) {
   import("//chrome/enterprise_companion/buildflags.gni")
 }
 import("//components/enterprise/buildflags/buildflags.gni")
@@ -54,7 +54,7 @@ if (is_fuchsia) {
   import("//build/config/fuchsia/generate_runner_scripts.gni")
   import("//third_party/fuchsia-gn-sdk/src/component.gni")
   import("//third_party/fuchsia-gn-sdk/src/package.gni")
-} else if (!is_cobalt) {
+} else if (!is_starboard) {
   import("//chrome/browser/buildflags.gni")
 }
 
@@ -108,7 +108,7 @@ group("gn_all") {
       "//base:base_unittests",
       "//codelabs",
     ]
-    if (!is_cobalt) {
+    if (!is_starboard) {
       deps += [ "//components:components_unittests" ]
     }
     deps += [
@@ -158,7 +158,7 @@ group("gn_all") {
       ]
     }
 
-    if (!is_ios && !is_android && !is_castos && !is_cobalt) {
+    if (!is_ios && !is_android && !is_castos && !is_starboard) {
       if (!is_fuchsia) {
         deps += [
           "//chrome",
@@ -178,35 +178,35 @@ group("gn_all") {
         "//tools/privacy_budget:privacy_budget_tools",
         "//ui/webui/resources/tools:webui_resources_tools_python_unittests",
       ]
-      if (!is_cobalt) {
+      if (!is_starboard) {
         deps += [ "//ui/accessibility/extensions:extensions" ]
       }
     }
 
-    if (!is_castos && !is_fuchsia && !is_cobalt) {
+    if (!is_castos && !is_fuchsia && !is_starboard) {
       deps += [ "//chrome/installer" ]
     }
 
-    if (!is_fuchsia && !is_cobalt) {
+    if (!is_fuchsia && !is_starboard) {
       if (enable_updater) {
         deps += [ "//chrome/updater" ]
       }
     }
 
-    if (!is_cobalt) {
+    if (!is_starboard) {
       if (enable_enterprise_companion) {
         deps += [ "//chrome/enterprise_companion" ]
       }
     }
 
-    if (enable_ppapi && !is_cobalt) {
+    if (enable_ppapi && !is_starboard) {
       deps += [
         "//ppapi:ppapi_unittests",
         "//ppapi/examples",
       ]
     }
 
-    if (!is_ios && !is_castos && !is_cobalt) {
+    if (!is_ios && !is_castos && !is_starboard) {
       if (!is_fuchsia) {
         deps += [ "//chrome/test:unit_tests" ]
       }
@@ -225,10 +225,10 @@ group("gn_all") {
         "//gpu:gpu_benchmark",
         "//gpu:gpu_unittests",
       ]
-      if (!is_cobalt) {
+      if (!is_starboard) {
         deps += [ "//content/shell:content_shell" ]
       }
-      if (!is_cobalt) {
+      if (!is_starboard) {
         deps += [
           "//content/test:content_browsertests",
           "//content/test:content_unittests",
@@ -273,7 +273,7 @@ group("gn_all") {
       if (!is_starboard) {
         deps += [ ":chromedriver_group" ]
       }
-      if (!is_cobalt) {
+      if (!is_starboard) {
         deps += [
           "//components:components_browsertests",
           "//net:net_perftests",
@@ -281,7 +281,7 @@ group("gn_all") {
       }
     }
 
-    if (is_chromeos && !is_cobalt) {
+    if (is_chromeos && !is_starboard) {
       deps += [ "//chrome" ]
     }
 
@@ -295,7 +295,7 @@ group("gn_all") {
         "//third_party/catapult/telemetry:bitmaptools($host_toolchain)",
       ]
       if (!is_android) {
-        if (!is_castos && !is_fuchsia && !is_cobalt) {
+        if (!is_castos && !is_fuchsia && !is_starboard) {
           deps += [ "//chrome/test:telemetry_perf_unittests" ]
         }
       } else {
@@ -365,7 +365,7 @@ group("gn_all") {
       ]
     }
 
-    if (!is_cobalt) {
+    if (!is_starboard) {
       if (enterprise_watermark) {
         deps += [ "//chrome/browser/enterprise/watermark:watermark_app" ]
       }
@@ -379,7 +379,7 @@ group("gn_all") {
       ]
     }
 
-    if (!is_android && !is_ios && !is_fuchsia && !is_cobalt) {
+    if (!is_android && !is_ios && !is_fuchsia && !is_starboard) {
       deps += [ "//ui/webui/examples:webui_examples" ]
     }
 
@@ -393,7 +393,7 @@ group("gn_all") {
       }
     }
 
-    if (is_win && !is_cobalt) {
+    if (is_win && !is_starboard) {
       deps += [
         "//chrome/credential_provider",
         "//chrome/credential_provider/test:gcp_unittests",
@@ -406,7 +406,7 @@ group("gn_all") {
       }
     }
 
-    if (is_mac && !is_cobalt) {
+    if (is_mac && !is_starboard) {
       deps += [
         "//chrome/installer/gcapi_mac:gcapi_example",
         "//tools/mac",
@@ -533,7 +533,7 @@ group("gn_all") {
         deps += [ "//testing:empty_main" ]
       }
 
-      if (!is_castos && !is_cobalt) {
+      if (!is_castos && !is_starboard) {
         deps += [ "//chrome:xdg_mime" ]
       }
 
@@ -544,7 +544,7 @@ group("gn_all") {
         ]
       }
 
-      if (is_chrome_branded && is_official_build && !is_cobalt) {
+      if (is_chrome_branded && is_official_build && !is_starboard) {
         # TODO(dpranke): add the linux_dump_symbols flag?
         deps += [ "//chrome:linux_symbols" ]
       }
@@ -588,12 +588,12 @@ group("gn_all") {
           "//ipc:ipc_perftests",
           "//net:dump_cache",
         ]
-        if (!is_cobalt) {
+        if (!is_starboard) {
           deps += [ "//components:components_perftests" ]
         }
       }
 
-      if (!is_android && !is_castos && !is_ios && !is_fuchsia && !is_cobalt) {
+      if (!is_android && !is_castos && !is_ios && !is_fuchsia && !is_starboard) {
         deps += [
           "//chrome/test:load_library_perf_tests",
           "//chrome/test:sync_performance_tests",
@@ -664,11 +664,11 @@ group("gn_all") {
         "//ui/snapshot:snapshot_unittests",
       ]
 
-      if (!is_castos && !is_cobalt) {
+      if (!is_castos && !is_starboard) {
         deps += [ "//chrome/test:chrome_app_unittests" ]
       }
 
-      if (!is_debug && !is_component_build && !is_castos && !is_cobalt) {
+      if (!is_debug && !is_component_build && !is_castos && !is_starboard) {
         deps += [ "//chrome/tools/service_discovery_sniffer" ]
       }
     }
@@ -688,7 +688,7 @@ group("gn_all") {
       ]
     }
 
-    if (is_win && !is_cobalt) {
+    if (is_win && !is_starboard) {
       deps += [
         "//base:pe_image_test",
         "//chrome/chrome_elf:chrome_elf_unittests",
@@ -791,7 +791,7 @@ group("gn_all") {
           [ "//components/services/filesystem:filesystem_service_unittests" ]
     }
 
-    if (is_linux && !is_castos && !is_cobalt) {
+    if (is_linux && !is_castos && !is_starboard) {
       # TODO(https://crbug.com/1329673): Figure out if any of these should be in
       # gn_all and figure out how cross-platform they are.
       deps += [
@@ -936,7 +936,7 @@ group("all_rust") {
 
   # TODO(https://crbug.com/405379314): This fails to build on some iOS ASAN
   # builders.
-  if (!is_cobalt_hermetic_build) {
+  if (!is_starboard_hermetic_build) {
   if (!is_ios || !is_asan) {
     deps += [ "//testing/rust_gtest_interop:rust_gtest_interop_unittests" ]
   }
@@ -961,7 +961,7 @@ group("rust_build_tests") {
 }
 
 if (enable_remoting && ((is_linux && ozone_platform_x11) ||
-                        ((is_chromeos || is_win) && !use_ozone)) && !is_cobalt) {
+                        ((is_chromeos || is_win) && !use_ozone)) && !is_starboard) {
   # On CQ, run the Traffic Annotation Auditor when a change affects one of these
   # targets.
   group("traffic_annotation_auditor_dependencies") {
@@ -976,7 +976,7 @@ if (enable_remoting && ((is_linux && ozone_platform_x11) ||
   }
 }
 
-if (is_chromeos && !is_cobalt) {
+if (is_chromeos && !is_starboard) {
   group("traffic_annotation_auditor_dependencies") {
     deps = [
       "//chrome",
@@ -985,7 +985,7 @@ if (is_chromeos && !is_cobalt) {
   }
 }
 
-if (is_android && !is_cronet_build && !is_cobalt) {
+if (is_android && !is_cronet_build && !is_starboard) {
   # On CQ, run the Traffic Annotation Auditor when a change affects one of these
   # targets.
   group("traffic_annotation_auditor_dependencies") {
@@ -1018,7 +1018,7 @@ if (is_fuchsia) {
 
 # TODO(GYP_GONE): Figure out if we really need this target or if there's
 # some better way to specify things.
-if (is_win && !is_cobalt) {
+if (is_win && !is_starboard) {
   group("chrome_official_builder_no_unittests") {
     deps = [
       "//chrome/common/win:eventlog_provider",
@@ -1044,7 +1044,7 @@ if (is_win && !is_cobalt) {
     }
   }
 
-  if (!is_cobalt) {
+  if (!is_starboard) {
     group("chrome_official_builder") {
       testonly = true
 
@@ -1165,7 +1165,7 @@ if (use_blink && !is_cronet_build && !is_starboard) {
   # previously //third_party/WebKit, now //third_party/blink, couldn't depend on
   # //content/shell. This might not longer be true, see
   # https://crbug.com/1018659.
-  if (use_blink && !is_cobalt) {
+  if (use_blink && !is_starboard) {
     group("blink_tests") {
       testonly = true
 
@@ -1230,7 +1230,7 @@ if (use_blink && !is_cronet_build && !is_starboard) {
     ]
   }
 
-  if (use_blink && !is_chromeos && !is_ios && !is_fuchsia && !is_android && !is_castos && !is_cobalt) {
+  if (use_blink && !is_chromeos && !is_ios && !is_fuchsia && !is_android && !is_castos && !is_starboard) {
     # https://chromium.googlesource.com/chromium/src/+/HEAD/docs/testing/run_web_platform_tests.md
     script_test("chrome_wpt_tests") {
       script = "//third_party/blink/tools/run_wpt_tests.py"
@@ -1251,7 +1251,7 @@ if (use_blink && !is_cronet_build && !is_starboard) {
         ":blink_web_tests_support_data",
         "//third_party/blink/tools:wpt_tests_isolate",
       ]
-      if (!is_cobalt) {
+      if (!is_starboard) {
         data_deps += [
           "//chrome:chrome",
           "//chrome/test/chromedriver:chromedriver_server",
@@ -1781,7 +1781,7 @@ assert(
 group("chromium_builder_perf") {
   testonly = true
 
-  if (!is_ios && !is_android && !is_castos && !is_cronet_build && !is_cobalt) {
+  if (!is_ios && !is_android && !is_castos && !is_cronet_build && !is_starboard) {
     data_deps = [
       "//components/tracing:tracing_perftests",
       "//gpu:command_buffer_perftests",
@@ -1806,7 +1806,7 @@ group("chromium_builder_perf") {
     }
   }
 
-  if (is_linux && !is_castos && !is_cobalt) {
+  if (is_linux && !is_castos && !is_starboard) {
     if (is_official_build) {
       # In GN builds, this is controlled by the 'linux_dump_symbols'
       # flag, which defaults to 1 for official builds. For now,
@@ -1817,7 +1817,7 @@ group("chromium_builder_perf") {
     data_deps += [ "//tools/perf/clear_system_cache" ]
   }
 
-  if (is_win && !is_cobalt) {
+  if (is_win && !is_starboard) {
     data_deps += [
       "//chrome/installer/mini_installer:mini_installer",
       "//components:components_perftests",
@@ -1826,7 +1826,7 @@ group("chromium_builder_perf") {
   }
 }
 
-if (!is_ios && !is_android && !is_castos && !is_cronet_build && !is_cobalt) {
+if (!is_ios && !is_android && !is_castos && !is_cronet_build && !is_starboard) {
   group("chromium_builder_asan") {
     testonly = true
 
@@ -1835,7 +1835,7 @@ if (!is_ios && !is_android && !is_castos && !is_cronet_build && !is_cobalt) {
       "//third_party/blink/public/mojom:mojom_modules_js",
       "//v8:d8",
     ]
-    if (!is_fuchsia && !is_cobalt) {
+    if (!is_fuchsia && !is_starboard) {
       deps += [ "//chrome:chrome" ]
     }
     if (!is_win) {

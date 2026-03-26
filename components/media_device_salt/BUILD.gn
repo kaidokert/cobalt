@@ -38,7 +38,7 @@ source_set("unit_tests") {
     "//sql:sql",
     "//testing/gtest/",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
     "//components/sync_preferences:test_support",
     ]

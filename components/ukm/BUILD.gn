@@ -110,7 +110,7 @@ static_library("observers") {
     ]
   }
 
-  if (!is_cobalt) {
+  if (!is_starboard) {
     public_deps = [ "//components/unified_consent" ]
   }
 }

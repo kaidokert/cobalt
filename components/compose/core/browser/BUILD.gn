@@ -49,7 +49,7 @@ static_library("browser") {
     "//services/metrics/public/cpp:metrics_cpp",
     "//services/metrics/public/cpp:ukm_builders",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
     "//components/autofill/core/browser",
     ]
@@ -80,7 +80,7 @@ source_set("unit_tests") {
     "//testing/gmock",
     "//testing/gtest",
   ]
-  if(!is_cobalt) {
+  if(!is_starboard) {
     deps += [
     "//components/autofill/core/browser",
           "//components/autofill/core/browser:test_support",

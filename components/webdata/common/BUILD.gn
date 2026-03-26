@@ -55,7 +55,7 @@ source_set("unit_tests") {
     "//components/os_crypt/async/browser:test_support",
     "//components/password_manager/core/browser",
   ]
-  if (!is_cobalt) {
+  if (!is_starboard) {
     deps += [ "//components/plus_addresses/webdata" ]
   }
   deps += [
